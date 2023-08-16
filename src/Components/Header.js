@@ -15,7 +15,6 @@ export default function Header(){
 }
 
 const SCHeader = styled.div`
-    border-bottom:  3px white solid;
     background-color: #151515;
     display: flex;
     align-items: center;
