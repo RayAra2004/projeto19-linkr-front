@@ -21,8 +21,8 @@ export default function Timeline(){
                     <p>timeline</p>
                 </div>
                 <div className="publish">
-                    <div>
-                        <img className="user_picture" src='https://source.unsplash.com/random'/>
+                    <div className="user_picture">
+                        <img src='https://source.unsplash.com/random'/>
                     </div>
                     <div className="post-confirm">
                         <p>What are you soing to share today?</p>
@@ -77,9 +77,13 @@ const SCBody = styled.div`
         }
     }
     .user_picture{
-        width: 50px;
-        height: 50px;
-        border-radius: 100%;
+        margin-right: 10px;
+        img{
+            width: 50px;
+            height: 50px;
+            border-radius: 100%;
+        }
+        
     }
 
     .publish{
@@ -89,9 +93,11 @@ const SCBody = styled.div`
         box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.0625);
         display: flex;
         position: relative;
+        padding-top: 1px;
 
         div:first-child{
-            margin: 10px 30px 0px 10px;
+            margin-left: 10px;
+            margin-top: 9px;
         }
 
         .post-confirm{
@@ -155,13 +161,19 @@ const SCPost = styled.div`
     border-radius: 16px;
     background-color: rgba(23, 23, 23, 1);
     color: white;
+    padding-top: 1px;
+    
     .user{
-        margin: 20px 10px 30px 10px;
+        margin-top: 10px;
+        margin-left: 10px;
         display: flex;
         align-items: center;
 
         h1{
             margin-left: 10px;
+            margin-top: -10px;
+            font-size: 19px;
+            font-family: 'Lato', sans-serif !important;
         }
 
         img{
@@ -173,10 +185,20 @@ const SCPost = styled.div`
 
     .description{
         margin-left: 70px;
-        margin-top: -30px;
+        margin-top: -15px;
+        span{
+            font-family: 'Lato', sans-serif !important;
+            font-size: 17px;
+            line-height: 21px;
+            color: rgba(183, 183, 183, 1);
+        }
     }
 
     .url{
-        margin-left: 90px;
+        margin-top: 20px;
+        margin-left: 65px;
+        border: 1px solid rgba(77, 77, 77, 1);
+        border-radius: 16px;
+        width: 85%;
     }
 `
