@@ -2,7 +2,7 @@ import styled from "styled-components"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
-import apiAuth from '../services/apiAuth'
+import apiAuth from '../Services/apiAuth'
 import ResetStyle from "../Styles/ResetStyle"
 
 
