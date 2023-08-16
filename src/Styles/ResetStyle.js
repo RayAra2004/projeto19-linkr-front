@@ -44,6 +44,21 @@ const ResetStyle = createGlobalStyle`
 		border-collapse: collapse;
 		border-spacing: 0;
 	}
+
+	html,body{
+        height: 100%;
+		margin: 0;
+    }
+
+    #root{
+        height: 100%;
+    }
+
+	strong{
+		font-weight: bold;
+	}
+
+	
 `
 
 export default ResetStyle
