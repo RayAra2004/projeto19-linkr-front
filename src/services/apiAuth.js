@@ -8,7 +8,7 @@ function login(body) {
 }
 
 function signup(body) {
-    const promise = axios.post(`${REACT_APP_DATABASE_URL}/signUp`, body)
+    const promise = axios.post(`${REACT_APP_DATABASE_URL}/sign-up`, body)
     return promise
 }
 

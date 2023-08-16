@@ -10,6 +10,8 @@ import ResetStyle from "../Styles/ResetStyle"
 export default function SignUp() {
   const [form, setForm] = useState({ email: "", password: "" })
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
+
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -17,14 +19,18 @@ export default function SignUp() {
 
   function handleLogin(e) {
     e.preventDefault()
+    setIsLoading(true)
 
     apiAuth.signup(form)
       .then(res => {
         console.log(res.data)
+        setIsLoading(false)
         navigate("/")
       })
       .catch(err => {
         console.log(err)
+        setIsLoading(false)
+        alert(err.response.data.message)
       })
   }
 
@@ -35,7 +41,7 @@ export default function SignUp() {
     <Container>
 
       <Banner>
-        <div class="txt">
+        <div className="txt">
 
         <h1>linkr</h1>
         <p>save, share and discover
@@ -50,29 +56,34 @@ export default function SignUp() {
           placeholder="e-mail"
           required
           value={form.email}
-          onChange={handleForm} />
+          onChange={handleForm}
+          disabled={isLoading} />
+          
         <input
           name="password"
           type="password"
           placeholder="password"
           value={form.password}
           required
-          onChange={handleForm} />
+          onChange={handleForm}
+          disabled={isLoading} />
            <input
           name="username"
           type="text"
           placeholder="username"
           value={form.username}
           required
-          onChange={handleForm} />
+          onChange={handleForm}
+          disabled={isLoading} />
            <input
           name="picture"
           type="url"
           placeholder="picture url"
           value={form.picture}
           required
-          onChange={handleForm} />
-        <button type="submit" >Sign Up</button>
+          onChange={handleForm}
+          disabled={isLoading} />
+        <button type="submit"  disabled={isLoading} >Sign Up</button>
 
         <SignupLink to="/" style={{ paddingLeft: 13, textDecoration: 'none' }}>
         Switch back to log in
