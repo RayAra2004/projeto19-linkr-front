@@ -1,27 +1,21 @@
-
-import SignIn from "./pages/signin";
-import SignUp from "./pages/signup"
-
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Timeline from "./Pages/Timeline";
+import SignIn from "./Pages/signin";
+import SignUp from "./Pages/signup";
 
 export default function App() {
   return (
 
-    
-<>
-
-
-
- <BrowserRouter>
+    <>
+      <BrowserRouter>
         <Routes>
-           <Route path="/" element={<SignIn />} />
-           <Route path="/signup" element={<SignUp />} /> 
- <Route path="/timeline" element={<Timeline/>}/>
+          <Route path="/" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} /> 
+          <Route path="/timeline" element={<Timeline/>}/>
 
         </Routes>
       </BrowserRouter> 
-</>
+    </>
 
   );
 }
