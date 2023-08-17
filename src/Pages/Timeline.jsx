@@ -164,11 +164,13 @@ const SCTimeline = styled.div`
   margin-top: 72px;
   display: flex;
   justify-content: center;
+  background-color: rgba(51, 51, 51, 1);
 `;
 
 const SCBody = styled.div`
   width: 611px;
   margin-top: 40px;
+  
 
   @media (max-width: 611px) {
     width: 100%;
@@ -299,6 +301,7 @@ const SCPost = styled.div`
   background-color: rgba(23, 23, 23, 1);
   color: white;
   padding-top: 1px;
+  margin-bottom: 20px;
 
   @media (max-width: 426px) {
     border-radius: 0;
