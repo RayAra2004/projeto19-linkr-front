@@ -24,13 +24,13 @@ export default function SignIn() {
       .then(res => {
         setIsLoading(false)
         console.log(res.data)
-        navigate("/")
+        navigate("/timeline")
       })
       .catch(err => {
         setIsLoading(false)
         alert(err.response.data.message)
       })
-  }
+    }
 
 
   return (
@@ -70,7 +70,7 @@ export default function SignIn() {
         First time? Create an account!
       </SignupLink>
       </FormContainer>
-     
+
 
     </Container>
     </>
@@ -105,7 +105,7 @@ p {
 }
 `;
 
-const FormContainer = styled.div`
+const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
