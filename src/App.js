@@ -2,12 +2,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Timeline from "./Pages/Timeline";
 import SignIn from "./Pages/signin";
 import SignUp from "./Pages/signup";
+import { AuthProvider } from "./Contexts/AuthContext";
 
 export default function App() {
   return (
-
     <>
       <BrowserRouter>
+
         <Routes>
 
           <Route path="/" element={<SignIn />} />
@@ -17,7 +18,7 @@ export default function App() {
 
         </Routes>
       </BrowserRouter> 
-    </>
 
+    </>
   );
 }
