@@ -10,6 +10,7 @@ import ResetStyle from "../Styles/ResetStyle"
 export default function SignIn() {
   const [form, setForm] = useState({ email: "", password: "" })
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false);
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -17,14 +18,17 @@ export default function SignIn() {
 
   function handleLogin(e) {
     e.preventDefault()
+    setIsLoading(true)
 
     apiAuth.login(form)
       .then(res => {
+        setIsLoading(false)
         console.log(res.data)
         navigate("/")
       })
       .catch(err => {
-        console.log(err)
+        setIsLoading(false)
+        alert(err.response.data.message)
       })
   }
 
@@ -35,7 +39,7 @@ export default function SignIn() {
     <Container>
 
       <Banner>
-        <div class="txt">
+        <div className="txt">
 
         <h1>linkr</h1>
         <p>save, share and discover
@@ -49,23 +53,24 @@ export default function SignIn() {
           type="email"
           placeholder="e-mail"
           required
+          disabled={isLoading}
           value={form.email}
           onChange={handleForm} />
         <input
           name="password"
           type="password"
           placeholder="password"
+          disabled={isLoading}
           value={form.password}
-          required
-          onChange={handleForm} />
-        <button type="submit" >Log In</button>
+          onChange={handleForm} 
+          required />
+        <button type="submit"    disabled={isLoading} >Log In</button>
 
-        <SignupLink to="/signup" style={{ paddingLeft: 13, textDecoration: 'none' }}>
+        <SignupLink to="/sign-up" style={{ paddingLeft: 13, textDecoration: 'none' }}>
         First time? Create an account!
       </SignupLink>
       </FormContainer>
      
-
 
     </Container>
     </>

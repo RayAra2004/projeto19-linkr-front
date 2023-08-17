@@ -8,14 +8,17 @@ export default function App() {
   return (
     <>
       <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/timeline" element={<Timeline />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
+
+        <Routes>
+
+          <Route path="/" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} /> 
+          <Route path="/timeline" element={<Timeline/>}/>
+
+
+        </Routes>
+      </BrowserRouter> 
+
     </>
   );
 }
