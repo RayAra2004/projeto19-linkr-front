@@ -4,21 +4,24 @@ import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import axios from "axios";
+import useAuth from "../Contexts/UseAuth";
 
 export default function Timeline() {
   const [liked, setLiked] = useState(false);
   const [posts, setPosts] = useState([]);
+  const { auth } = useAuth();
 
   //Teste para curtir com meu token (Naomi ihihi), quando o login no front utilizar o Auth do Brendo, importar o Auth e usar o Auth com o Bearer
   const authorization = {
     headers: {
-      Authorization: "Bearer b947f2dc-3a93-40f2-8c22-f747d847a148",
+      Authorization: `Bearer ${auth}`,
     },
   };
 
+  
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/posts`)
+      .get(`${process.env.REACT_APP_API_URL}/posts`)
       .then((answer) => {
         setPosts(answer.data);
       })
@@ -33,7 +36,7 @@ export default function Timeline() {
 
     if (alreadyLiked) {
       axios
-        .delete(`http://localhost:5000/posts/${postId}/like`, authorization) // Quando o back for deploy, adicionar o link no .env e alterar aqui
+        .delete(`${process.env.REACT_APP_API_URL}/posts/${postId}/like`, authorization) // Quando o back for deploy, adicionar o link no .env e alterar aqui
         .then(() => {
           setLiked((prevLiked) => ({
             ...prevLiked,
@@ -49,7 +52,7 @@ export default function Timeline() {
         });
     } else {
       axios
-        .post(`http://localhost:5000/posts/${postId}/like`, {}, authorization) // Quando o back for deploy, adicionar o link no .env e alterar aqui
+        .post(`${process.env.REACT_APP_API_URL}/posts/${postId}/like`, {}, authorization) // Quando o back for deploy, adicionar o link no .env e alterar aqui
         .then(() => {
           setLiked((prevLiked) => ({
             ...prevLiked,
