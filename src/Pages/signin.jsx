@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import apiAuth from '../Services/apiAuth'
 import ResetStyle from "../Styles/ResetStyle"
+import useAuth from "../Contexts/UseAuth"
 
 
 
@@ -11,6 +12,7 @@ export default function SignIn() {
   const [form, setForm] = useState({ email: "", password: "" })
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
   function handleForm(e) {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -21,14 +23,14 @@ export default function SignIn() {
     setIsLoading(true)
 
     apiAuth.login(form)
-      .then(res => {
+      .then(response => {
         setIsLoading(false)
-        console.log(res.data)
+        login(response.data.token)
         navigate("/timeline")
       })
       .catch(err => {
         setIsLoading(false)
-        alert(err.response.data.message)
+        alert(err.message)
       })
     }
 
