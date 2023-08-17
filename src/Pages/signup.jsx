@@ -1,6 +1,6 @@
 import styled from "styled-components"
 import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom"
+/* import { useNavigate } from "react-router-dom" */
 import { useState } from "react"
 import apiAuth from '../Services/apiAuth'
 import ResetStyle from "../Styles/ResetStyle"
@@ -8,8 +8,13 @@ import ResetStyle from "../Styles/ResetStyle"
 
 
 export default function SignUp() {
-  const [form, setForm] = useState({ email: "", password: "" })
-  const navigate = useNavigate()
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    username: "",   // Added to initialize the username field
+    picture: ""     // Added to initialize the picture field
+  });
+/*   const navigate = useNavigate() */
   const [isLoading, setIsLoading] = useState(false)
 
 
@@ -18,14 +23,15 @@ export default function SignUp() {
   }
 
   function handleLogin(e) {
+    alert('Form submitted') 
     e.preventDefault()
     setIsLoading(true)
 
     apiAuth.signup(form)
       .then(res => {
-        console.log(res.data)
+        console.log("teste")
         setIsLoading(false)
-        navigate("/")
+        /* navigate("/") */
       })
       .catch(err => {
         console.log(err)
@@ -37,71 +43,63 @@ export default function SignUp() {
 
   return (
     <>
-    <ResetStyle/>
-    <Container>
+      <ResetStyle />
+      <Container>
 
-      <Banner>
-        <div className="txt">
-
-        <h1>linkr</h1>
-        <p>save, share and discover
-          the best links on the web</p>
+        <Banner>
+          <div className="txt">
+            <h1>linkr</h1>
+            <p>save, share and discover
+              the best links on the web</p>
           </div>
-      </Banner>
+        </Banner>
 
-      <FormContainer onSubmit={handleLogin}>
-        <input
-          name="email"
-          type="email"
-          placeholder="e-mail"
-          required
-          value={form.email}
-          onChange={handleForm}
-          disabled={isLoading} />
-          
-        <input
-          name="password"
-          type="password"
-          placeholder="password"
-          value={form.password}
-          required
-          onChange={handleForm}
-          disabled={isLoading} />
-           <input
-          name="username"
-          type="text"
-          placeholder="username"
-          value={form.username}
-          required
-          onChange={handleForm}
-          disabled={isLoading} />
-           <input
-          name="picture"
-          type="url"
-          placeholder="picture url"
-          value={form.picture}
-          required
-          onChange={handleForm}
-          disabled={isLoading} />
-        <button type="submit"  disabled={isLoading} >Sign Up</button>
-
-        <SignupLink to="/" style={{ paddingLeft: 13, textDecoration: 'none' }}>
-        Switch back to log in
-      </SignupLink>
-      </FormContainer>
-     
-
-
-    </Container>
+        <FormContainer onSubmit={handleLogin}>
+          <input
+            name="email"
+            type="email"
+            placeholder="e-mail"
+            required
+            value={form.email}
+            onChange={handleForm}
+            disabled={isLoading} />
+          <input
+            name="password"
+            type="password"
+            placeholder="password"
+            value={form.password}
+            required
+            onChange={handleForm}
+            disabled={isLoading} />
+          <input
+            name="username"
+            type="text"
+            placeholder="username"
+            value={form.username}
+            required
+            onChange={handleForm}
+            disabled={isLoading} />
+          <input
+            name="picture"
+            type="url"
+            placeholder="picture url"
+            value={form.picture}
+            required
+            onChange={handleForm}
+            disabled={isLoading} />
+          <button type="submit" disabled={isLoading} >Sign Up</button>
+          <SignupLink to="/" style={{ paddingLeft: 13, textDecoration: 'none' }}>
+            Switch back to log in
+          </SignupLink>
+        </FormContainer>
+      </Container>
     </>
   )
 }
 
 const Container = styled.div`
   display: flex;
-  
- `;
-
+  `;
 
 const Banner = styled.h1`
 color: red;
@@ -125,7 +123,7 @@ p {
 }
 `;
 
-const FormContainer = styled.div`
+const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -158,7 +156,6 @@ font-size: 30px;
 color: white;
 cursor: pointer;
   }
- 
 `;
 
 const SignupLink = styled(Link)`
