@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 /* import { useNavigate } from "react-router-dom" */
 import { useState } from "react"
 import apiAuth from '../Services/apiAuth'
@@ -11,10 +11,10 @@ export default function SignUp() {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    username: "",   // Added to initialize the username field
-    picture: ""     // Added to initialize the picture field
+    username: "",   
+    picture: ""   
   });
-/*   const navigate = useNavigate() */
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
 
 
@@ -23,7 +23,7 @@ export default function SignUp() {
   }
 
   function handleLogin(e) {
-    alert('Form submitted') 
+
     e.preventDefault()
     setIsLoading(true)
 
@@ -31,7 +31,7 @@ export default function SignUp() {
       .then(res => {
         console.log("teste")
         setIsLoading(false)
-        /* navigate("/") */
+        navigate("/")
       })
       .catch(err => {
         console.log(err)
