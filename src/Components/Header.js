@@ -1,15 +1,16 @@
 import { styled } from "styled-components";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom";
 
 
 export default function Header() {
   const [openButton, setOpenButton] = useState(false);
   const navigate = useNavigate()
-  
+
 
   function activeLogout() {
-    // Redirecione para a rota de login
+    localStorage.removeItem('auth')
+    localStorage.removeItem('user')
     navigate("/");
   }
 
@@ -20,8 +21,10 @@ export default function Header() {
   return (
     <>
       <SCHeader>
-        <h1>linkr</h1>
-        <div onClick={toggleMenu}>
+        <Link to="/timeline">
+          <Logo className="logo">linkr</Logo>
+        </Link>
+        <div className="barra" onClick={toggleMenu}>
           <ion-icon
             name={openButton ? "chevron-up-outline" : "chevron-down-outline"}
           ></ion-icon>
@@ -30,7 +33,9 @@ export default function Header() {
       </SCHeader>
       {openButton && (
         <LogoutButton onClick={activeLogout}>
-          <button>Logout</button>
+            <LogoutText>
+              Logout
+            </LogoutText>
         </LogoutButton>
       )}
     </>
@@ -38,7 +43,6 @@ export default function Header() {
 }
 
 const SCHeader = styled.div`
-  border-bottom: 3px white solid;
   background-color: #151515;
   display: flex;
   align-items: center;
@@ -50,13 +54,22 @@ const SCHeader = styled.div`
   height: 72px;
   width: 100%;
   color: white;
-
+  a{
+    color: white;
+    :hover{
+    -webkit-transform: scale(1.4);
+    transform: scale(1.1);
+  }
+  }
+  .barra{
+    position: relative;
+  }
   h1 {
     margin-left: 30px;
     font-weight: 700 !important;
     font-size: 49px;
+    cursor: pointer;
   }
-
   div {
     margin-right: 30px;
     display: flex;
@@ -66,32 +79,57 @@ const SCHeader = styled.div`
       width: 50px;
       height: 50px;
       margin-left: 5px;
+      cursor: pointer;
+      &:hover {
+    background-color: #fcd3d3; 
+    transition: 0.5s;
+    opacity: 0.5;
+  }
     }
-
     ion-icon {
       font-size: 30px;
+      cursor: pointer;
     }
-
-   
   }
 `;
 
-const LogoutButton = styled.div`
 
-button {
-  width: 150px;
-  height: 47px;
-  top: 72px;
-  left: 1307px;
-  border-radius: 0px 0px 20px 20px;
-  background: #171717;
+
+const commonStyle = `
   font-size: 30px;
   color: #fff;
   letter-spacing: 1px;
-  
-}
-
+  cursor: pointer;
+  transition: 0.5s;
+  :hover {
+    transform: scale(1.3);
+  }
 `;
 
+const LogoutButton = styled.button`
+  position: absolute;
+  right: 10px;
+  border-radius: 0px 0px 20px 20px;
+  background: #171717;
 
+  padding-top: 20px;
+  ${commonStyle}
+`
+
+const Logo = styled.h1`
+  ${commonStyle}
+  font-weight: 700 !important;
+  font-size: 49px;
+  margin-left: 30px;
+`;
+
+const LogoutText = styled.h1`
+    ${commonStyle}
+    width: 150px;
+    height: 47px;
+    top: 72px;
+    font-size: 30px;
+    color: #fff;
+    letter-spacing: 1px;
+`;
 

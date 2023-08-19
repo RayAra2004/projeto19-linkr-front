@@ -5,6 +5,7 @@ const GlobalStyle = createGlobalStyle`
         font-family: 'Passion One', cursive !important;
         font-style: normal !important;
         font-weight: 400 !important;
+        user-select: none !important;
     }
     button {
         outline: none;
