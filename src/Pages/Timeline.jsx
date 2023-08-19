@@ -6,11 +6,13 @@ import { Tooltip } from "react-tooltip";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
+import { useNavigate } from "react-router-dom";
 
 export default function Timeline() {
   const [liked, setLiked] = useState({});
   const [posts, setPosts] = useState([]);
   const { auth } = useAuth();
+  const navigate = useNavigate();
 
   const authorization = {
     headers: {
@@ -18,10 +20,18 @@ export default function Timeline() {
     },
   };
 
+
   // Estado para armazenar as tendências
   const [trendingHashtags, setTrendingHashtags] = useState([]);
 
   useEffect(() => {
+
+    if(!auth){
+      navigate('/')
+      alert("Faça o Login!")
+      return
+    }
+
     axios
       .get(`${process.env.REACT_APP_API_URL}/posts`)
       .then((answer) => {
