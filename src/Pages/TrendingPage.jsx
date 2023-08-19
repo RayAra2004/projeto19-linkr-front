@@ -6,23 +6,18 @@ import { Tooltip } from "react-tooltip";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
-import { useNavigate } from "react-router-dom";
-import Post from "../Components/Post";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Contexts/Context";
-export default function Timeline() {
-  const [liked, setLiked] = useState(false);
+import { Link } from "react-router-dom";
+
+export default function TrendingPage() {
+  const { trendings } = useContext(Context);
+  const [liked, setLiked] = useState({});
   const [posts, setPosts] = useState(undefined);
-  const { setTrendings } = useContext(Context);
-  const [url, setUrl] = useState("");
-  const [description, setDescription] = useState("");
-  const [textButton, setTextButton] = useState("Publish");
-  const [disabled, setDisabled] = useState(false);
-  const [controle, setControle] = useState(0);
+  const [controle] = useState(0);
   const { auth } = useAuth();
-  // Estado para armazenar as tendências
-  const [trendingHashtags, setTrendingHashtags] = useState([]);
   const navigate = useNavigate();
+  const { hashtag } = useParams();
 
   const authorization = {
     headers: {
@@ -31,46 +26,27 @@ export default function Timeline() {
   };
 
   useEffect(() => {
-
-    console.log('oooiiiiiii')
-
-    if(!auth){
-      navigate('/')
-      alert("Faça o Login!")
-      return
+    if (!auth) {
+      navigate("/");
+      alert("Faça o Login!");
+      return;
     }
 
     axios
-      .get(`${process.env.REACT_APP_API_URL}/posts`)
+      .get(`${process.env.REACT_APP_API_URL}/hashtag/${hashtag}`)
       .then((answer) => {
-        setPosts(answer.data);
-        const hashtagCount = {};
-        answer.data.forEach((post) => {
-          const hashtags = post.description.match(/#\w+/g);
-          if (hashtags) {
-            hashtags.forEach((tag) => {
-              if (hashtagCount[tag]) {
-                hashtagCount[tag]++;
-              } else {
-                hashtagCount[tag] = 1;
-              }
-            });
-          }
-        });
-
-        const sortedHashtags = Object.keys(hashtagCount).sort(
-          (a, b) => hashtagCount[b] - hashtagCount[a]
-        );
-
-        setTrendingHashtags(sortedHashtags.slice(0, 10));
-        setTrendings(sortedHashtags.slice(0, 10));
+        const postsWithLikedStatus = answer.data.map((post) => ({
+          ...post,
+          liked: post.likedUsers.includes(auth),
+        }));
+        setPosts(postsWithLikedStatus);
       })
       .catch((error) => {
         alert(
-          "An error occured while trying to fetch the posts, please refresh the page"
+          "An error occurred while trying to fetch the posts, please refresh the page"
         );
       });
-  }, [auth, controle, navigate, setTrendings]);
+  }, [hashtag, auth, controle, navigate]);
 
   const handleLikeClick = (postId) => {
     const alreadyLiked = liked[postId];
@@ -89,7 +65,7 @@ export default function Timeline() {
           setPosts((prevPosts) => {
             return prevPosts.map((post) =>
               post.id === postId
-                ? { ...post, likes: parseInt(post.likes) - 1 }
+                ? { ...post, likes: parseInt(post.likes) - 1, liked: false }
                 : post
             );
           });
@@ -109,39 +85,13 @@ export default function Timeline() {
           setPosts((prevPosts) => {
             return prevPosts.map((post) =>
               post.id === postId
-                ? { ...post, likes: parseInt(post.likes) + 1 }
+                ? { ...post, likes: parseInt(post.likes) + 1, liked: true }
                 : post
             );
           });
         });
     }
   };
-
-  function publish(e) {
-    e.preventDefault();
-
-    setTextButton("Publishing...");
-    setDisabled(true);
-
-    axios
-      .post(
-        `${process.env.REACT_APP_API_URL}/post`,
-        { url, description },
-        authorization
-      )
-      .then((res) => {
-        setDescription("");
-        setUrl("");
-        setTextButton("Publish");
-        setDisabled(false);
-        setControle(controle + 1);
-      })
-      .catch((err) => {
-        alert("Houve um erro ao publicar seu link");
-        setTextButton("Publish");
-        setDisabled(false);
-      });
-  }
 
   const handleTooltipContent = (post) => {
     const totalLikes = parseInt(post.likes);
@@ -174,21 +124,9 @@ export default function Timeline() {
         <Header />
         <SCBody>
           <div className="timeline">
-            <p>timeline</p>
+            <p># {hashtag}</p>
           </div>
-          <div className="publish">
-            <div className="user_picture">
-              <img src="https://source.unsplash.com/random" alt="" />
-            </div>
-            <div className="post-confirm">
-              <p>What are you going to share today?</p>
-              <form>
-                <input placeholder="http:// ..." />
-                <input placeholder="Awesome article about #javascript" />
-                <button>{textButton}</button>
-              </form>
-            </div>
-          </div>
+
           <div className="published">
             <p className="loading">Loading</p>
           </div>
@@ -202,36 +140,72 @@ export default function Timeline() {
       <Header />
       <SCBody>
         <div className="timeline">
-          <p>timeline</p>
-        </div>
-        <div className="publish">
-          <div className="user_picture">
-            <img src="https://source.unsplash.com/random" alt="" />
-          </div>
-          <div className="post-confirm">
-            <p>What are you going to share today?</p>
-            <form onSubmit={(e) => publish(e)}>
-              <input
-                placeholder="http:// ..."
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                disabled={disabled}
-                required
-              />
-              <input
-                placeholder="Awesome article about #javascript"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                disabled={disabled}
-              />
-              <button {...disabled}>{textButton}</button>
-            </form>
-          </div>
+          <p># {hashtag}</p>
         </div>
         <div className="published">
-          {/* TODO: Trocar para componente */}
-          {posts && posts.map((p) => (
-              <Post post= {p} setPosts = {setPosts} url={url}/>
+          {posts.map((post) => (
+            <SCPost key={post.id} className="post">
+              <div className="user">
+                <img src={post.picture} alt="" />
+
+                <LikeDiv className="like">
+                  <LikeButton onClick={() => handleLikeClick(post.id)}>
+                    {post.liked ? ( // Verifica o estado liked do post
+                      <FaHeart color="red" size={20} />
+                    ) : (
+                      <FaRegHeart color="white" size={20} />
+                    )}
+                  </LikeButton>
+                  <Tooltip
+                    id="my-tooltip"
+                    style={{
+                      backgroundColor: "white",
+                      fontFamily: "Lato",
+                      fontSize: "15px",
+                      color: "#222",
+                      height: "25px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  />
+                  <h3
+                    data-tooltip-id="my-tooltip"
+                    data-tooltip-content={handleTooltipContent(post)}
+                    data-tooltip-place="bottom"
+                  >
+                    {parseInt(post.likes)} likes
+                  </h3>
+                </LikeDiv>
+              </div>
+              <div className="description">
+                <h2>{post.username}</h2>
+                <span>{post.description}</span>
+                <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">
+                  <div className="url">
+                    <div className="data">
+                      <h1>{post.metadataUrl.title}</h1>
+                      <span>{post.metadataUrl.description}</span>
+                      <br />
+                      <a
+                        href={post.metadataUrl.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {post.metadataUrl.url}
+                      </a>
+                    </div>
+                    <div className="image">
+                      <img src={post.metadataUrl.image} alt="" />
+                    </div>
+                  </div>
+                </a>
+                <Tagify
+                  color="#fffff"
+                  onClick={(text, type) => console.log(text, type)}
+                ></Tagify>
+              </div>
+            </SCPost>
           ))}
         </div>
       </SCBody>
@@ -242,7 +216,7 @@ export default function Timeline() {
           color="#fffff"
           onClick={(text, type) => console.log(text, type)}
         >
-          {trendingHashtags.map((tag, index) => (
+          {trendings.map((tag, index) => (
             <Link to={`/hashtag/${tag.replace("#", "")}`}>
               <h2 key={index}>{tag}</h2>
             </Link>
@@ -252,6 +226,16 @@ export default function Timeline() {
     </SCTimeline>
   );
 }
+
+const LikeDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  h3 {
+    font-size: 12px;
+    font-family: "Lato", sans-serif !important;
+  }
+`;
 
 const Underline = styled.div`
   width: 100%;
@@ -472,73 +456,71 @@ const SCPost = styled.div`
     margin-top: 20px;
     margin-left: 15px;
     margin-bottom: 10px;
-    
+
     span {
-
-    h3 {
-      font-family: "Lato", sans-serif !important;
-      font-size: 17px;
-      line-height: 21px;
-      color: rgba(183, 183, 183, 1);
+      h3 {
+        font-family: "Lato", sans-serif !important;
+        font-size: 17px;
+        line-height: 21px;
+        color: rgba(183, 183, 183, 1);
+      }
+      h2 {
+        font-size: 17px;
+        font-family: "Lato", sans-serif !important;
+      }
+      span {
+        color: white;
+        font-size: 18px;
+      }
     }
-    h2 {
-      font-size: 17px;
-      font-family: "Lato", sans-serif !important;
-    }
-    span {
-      color: white;
-      font-size: 18px;
-    }
-  }
 
-  .url {
-    border: 1px solid rgba(77, 77, 77, 1);
-    border-radius: 16px;
-    max-width: 95%;
-    min-height: 92px;
-    display: flex;
-    font-family: "Lato", sans-serif !important;
-    font-weight: 400;
-        .data{
-            margin-top: 10px;
-            margin-left: 4px;
-            display: flex;
-            flex-direction: column;
-
-            h1{  
-                font-size: 21px;
-                line-height: 20px;
-                color: rgba(206, 206, 206, 1);
-            }
-
-            span{
-                font-size: 16px;
-                line-height: 13px;
-                color: rgba(155, 149, 149, 1);
-                
-            }
-
-            a{
-                font-size: 16px;
-                line-height: 13px;
-                color: rgba(206, 206, 206, 1);
-            }
-        }
-
-        .image{
-            img{
-                width: 154px;
-                max-height: 155px;
-                border-radius: 0px 12px 13px 0px;
-            }
-        }
-  }
-
-  @media (max-width: 426px) {
     .url {
-      margin-left: 60px;
-      width: 80%;
+      border: 1px solid rgba(77, 77, 77, 1);
+      border-radius: 16px;
+      max-width: 95%;
+      min-height: 92px;
+      display: flex;
+      font-family: "Lato", sans-serif !important;
+      font-weight: 400;
+      .data {
+        margin-top: 10px;
+        margin-left: 4px;
+        display: flex;
+        flex-direction: column;
+
+        h1 {
+          font-size: 21px;
+          line-height: 20px;
+          color: rgba(206, 206, 206, 1);
+        }
+
+        span {
+          font-size: 16px;
+          line-height: 13px;
+          color: rgba(155, 149, 149, 1);
+        }
+
+        a {
+          font-size: 16px;
+          line-height: 13px;
+          color: rgba(206, 206, 206, 1);
+        }
+      }
+
+      .image {
+        img {
+          width: 154px;
+          max-height: 155px;
+          border-radius: 0px 12px 13px 0px;
+        }
+      }
+    }
+
+    @media (max-width: 426px) {
+      .url {
+        margin-left: 60px;
+        width: 80%;
+      }
     }
   }
-}
-`
+`;

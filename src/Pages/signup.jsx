@@ -55,7 +55,7 @@ export default function SignUp() {
         </Banner>
 
         <FormContainer onSubmit={handleLogin}>
-          <input
+          <input data-test="email"
             name="email"
             type="email"
             placeholder="e-mail"
@@ -63,7 +63,7 @@ export default function SignUp() {
             value={form.email}
             onChange={handleForm}
             disabled={isLoading} />
-          <input
+          <input data-test="password"
             name="password"
             type="password"
             placeholder="password"
@@ -71,7 +71,7 @@ export default function SignUp() {
             required
             onChange={handleForm}
             disabled={isLoading} />
-          <input
+          <input  data-test="username"
             name="username"
             type="text"
             placeholder="username"
@@ -79,7 +79,7 @@ export default function SignUp() {
             required
             onChange={handleForm}
             disabled={isLoading} />
-          <input
+          <input data-test="picture-url"
             name="picture"
             type="url"
             placeholder="picture url"
@@ -87,9 +87,9 @@ export default function SignUp() {
             required
             onChange={handleForm}
             disabled={isLoading} />
-          <button type="submit" disabled={isLoading} >Sign Up</button>
+          <button type="submit" disabled={isLoading} data-test="sign-up-btn" >Sign Up</button>
           <SignupLink to="/" style={{ paddingLeft: 13, textDecoration: 'none' }}>
-            Switch back to log in
+           <p data-test="login-link"> Switch back to log in</p>
           </SignupLink>
         </FormContainer>
       </Container>
