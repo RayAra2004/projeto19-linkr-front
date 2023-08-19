@@ -28,7 +28,7 @@ export default function Header() {
           <ion-icon
             name={openButton ? "chevron-up-outline" : "chevron-down-outline"}
           ></ion-icon>
-          <img src="https://source.unsplash.com/random" alt="" />
+          <img src="https://source.unsplash.com/random" alt=""  />
         </div>
       </SCHeader>
       {openButton && (
