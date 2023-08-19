@@ -50,7 +50,7 @@ export default function SignIn() {
       </Banner>
 
       <FormContainer onSubmit={handleLogin}>
-        <input
+        <input  data-test="email"
           name="email"
           type="email"
           placeholder="e-mail"
@@ -58,7 +58,7 @@ export default function SignIn() {
           disabled={isLoading}
           value={form.email}
           onChange={handleForm} />
-        <input
+        <input data-test="password"
           name="password"
           type="password"
           placeholder="password"
@@ -66,10 +66,10 @@ export default function SignIn() {
           value={form.password}
           onChange={handleForm} 
           required />
-        <button type="submit"    disabled={isLoading} >Log In</button>
+        <button type="submit"    disabled={isLoading} data-test="login-btn" >Log In</button>
 
         <SignupLink to="/sign-up" style={{ paddingLeft: 13, textDecoration: 'none' }}>
-        First time? Create an account!
+       <p data-test="sign-up-link" >First time? Create an account!</p> 
       </SignupLink>
       </FormContainer>
 
