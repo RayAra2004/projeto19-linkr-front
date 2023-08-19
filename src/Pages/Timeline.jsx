@@ -15,7 +15,6 @@ export default function Timeline() {
   const [textButton, setTextButton] = useState('Publish');
   const [disabled, setDisabled] = useState(false);
   let controle = 0;
-  const [liked, setLiked] = useState({});
   const { auth } = useAuth();
 
   const authorization = {
@@ -555,4 +554,5 @@ const SCPost = styled.div`
       width: 80%;
     }
   }
-`;
+}
+`
