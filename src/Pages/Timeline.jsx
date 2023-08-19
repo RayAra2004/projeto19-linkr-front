@@ -8,8 +8,14 @@ import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
 
 export default function Timeline() {
+  const [liked, setLiked] = useState(false);
+  const [posts, setPosts] = useState(undefined);
+  const [url, setUrl] = useState('');
+  const [description, setDescription] = useState('');
+  const [textButton, setTextButton] = useState('Publish');
+  const [disabled, setDisabled] = useState(false);
+  let controle = 0;
   const [liked, setLiked] = useState({});
-  const [posts, setPosts] = useState([]);
   const { auth } = useAuth();
 
   const authorization = {
@@ -26,7 +32,6 @@ export default function Timeline() {
       .get(`${process.env.REACT_APP_API_URL}/posts`)
       .then((answer) => {
         setPosts(answer.data);
-
         // Contar as hashtags e definir as tendências
         const hashtagCount = {};
         answer.data.forEach((post) => {
@@ -51,9 +56,9 @@ export default function Timeline() {
         setTrendingHashtags(sortedHashtags.slice(0, 10)); // Mostra as 10 mais frequentes
       })
       .catch((error) => {
-        alert(error.message);
+        alert("An error occured while trying to fetch the posts, please refresh the page");
       });
-  }, []);
+  }, [posts, controle]);
 
   // Pretendo componentizar isso quando eu descobrir como
   const handleLikeClick = (postId) => {
@@ -101,11 +106,37 @@ export default function Timeline() {
     }
   };
 
-  return (
-    <SCTimeline>
+  function publish(e){
+      e.preventDefault();
+
+      setTextButton('Publishing...');
+      setDisabled(true);
+
+      axios.post(`${process.env.REACT_APP_API_URL}/post`, {url, description}, authorization)
+        .then(res => {
+          setDescription('');
+          setUrl('');
+          setTextButton('Publish');
+          setDisabled(false);
+          controle++;
+        })
+        .catch(err => {
+          alert("Houve um erro ao publicar seu link");
+          setTextButton('Publish');
+          setDisabled(false);
+        })
+  }
+
+  if(posts && posts.length === 0){
+    alert("There are no posts yet");
+  }
+
+  if(posts === undefined){
+    return(
+        <SCTimeline>
       <Header />
       <SCBody>
-        <div>
+        <div className="timeline">
           <p>timeline</p>
         </div>
         <div className="publish">
@@ -117,7 +148,36 @@ export default function Timeline() {
             <form>
               <input placeholder="http:// ..." />
               <input placeholder="Awesome article about #javascript" />
-              <button>Publish</button>
+              <button>{textButton}</button>
+            </form>
+          </div>
+        </div>
+        <div className="published">
+            <p className="loading">Loading</p>
+        </div>
+      </SCBody>
+    </SCTimeline>
+    )
+  }
+
+  return (
+    <SCTimeline>
+      <Header />
+      <SCBody>
+        {/* TODO: Componentizar */}
+        <div className="timeline">
+          <p>timeline</p>
+        </div>
+        <div className="publish">
+          <div className="user_picture">
+            <img src="https://source.unsplash.com/random" alt="" />
+          </div>
+          <div className="post-confirm">
+            <p>What are you going to share today?</p>
+            <form onSubmit={(e) => publish(e)}>
+              <input placeholder="http:// ..." value={url} onChange={e => setUrl(e.target.value)} disabled={disabled} required/>
+              <input placeholder="Awesome article about #javascript" value={description} onChange={e => setDescription(e.target.value)} disabled={disabled}/>
+              <button {...disabled}>{textButton}</button>
             </form>
           </div>
         </div>
@@ -160,6 +220,19 @@ export default function Timeline() {
               </div>
               <div className="description">
                 <h2>{post.username}</h2>
+                <span>{post.description}</span>
+                <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">
+                    <div className="url">
+                        <div className="data">
+                            <h1>{post.metadataUrl.title}</h1>
+                            <span>{post.metadataUrl.description}</span><br/>
+                            <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">{post.metadataUrl.url}</a>
+                        </div>
+                        <div className="image">
+                            <img src={post.metadataUrl.image} alt=""/>
+                        </div>
+                    </div>
+                </a>
                 <Tagify
                   color="#fffff"
                   onClick={(text, type) => console.log(text, type)}
@@ -242,12 +315,19 @@ const SCTimeline = styled.div`
 const SCBody = styled.div`
   width: 611px;
   margin-top: 40px;
+  
+  .loading{
+    color: white;
+    font-size: 30px;
+    width: 100%;
+    text-align: center;
+  }
 
   @media (max-width: 611px) {
     width: 100%;
   }
 
-  div:first-child {
+  .timeline{
     p {
       color: white;
       font-family: "Oswald", sans-serif !important;
@@ -367,7 +447,7 @@ const SCBody = styled.div`
 const SCPost = styled.div`
   width: 100%;
   display: flex;
-  height: 276px;
+  min-height: 276px;
   border-radius: 16px;
   background-color: rgba(23, 23, 23, 1);
   color: white;
@@ -406,6 +486,10 @@ const SCPost = styled.div`
     gap: 10px;
     margin-top: 20px;
     margin-left: 15px;
+    margin-bottom: 10px;
+    
+    span {
+
     h3 {
       font-family: "Lato", sans-serif !important;
       font-size: 17px;
@@ -425,7 +509,44 @@ const SCPost = styled.div`
   .url {
     border: 1px solid rgba(77, 77, 77, 1);
     border-radius: 16px;
-    width: 95%;
+    max-width: 95%;
+    min-height: 92px;
+    display: flex;
+    font-family: "Lato", sans-serif !important;
+    font-weight: 400;
+        .data{
+            margin-top: 10px;
+            margin-left: 4px;
+            display: flex;
+            flex-direction: column;
+
+            h1{  
+                font-size: 21px;
+                line-height: 20px;
+                color: rgba(206, 206, 206, 1);
+            }
+
+            span{
+                font-size: 16px;
+                line-height: 13px;
+                color: rgba(155, 149, 149, 1);
+                
+            }
+
+            a{
+                font-size: 16px;
+                line-height: 13px;
+                color: rgba(206, 206, 206, 1);
+            }
+        }
+
+        .image{
+            img{
+                width: 154px;
+                max-height: 155px;
+                border-radius: 0px 12px 13px 0px;
+            }
+        }
   }
 
   @media (max-width: 426px) {
