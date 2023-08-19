@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
+import { Tagify } from "react-tagify";
 
 export default function Timeline() {
   const [liked, setLiked] = useState(false);
@@ -14,22 +15,45 @@ export default function Timeline() {
   const [textButton, setTextButton] = useState('Publish');
   const [disabled, setDisabled] = useState(false);
   let controle = 0;
+  const [liked, setLiked] = useState({});
   const { auth } = useAuth();
 
-  //Teste para curtir com meu token (Naomi ihihi), quando o login no front utilizar o Auth do Brendo, importar o Auth e usar o Auth com o Bearer
   const authorization = {
     headers: {
       Authorization: `Bearer ${auth}`,
     },
   };
 
-  
+  // Estado para armazenar as tendências
+  const [trendingHashtags, setTrendingHashtags] = useState([]);
+
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/posts`)
       .then((answer) => {
         setPosts(answer.data);
-        console.log(answer.data)
+        // Contar as hashtags e definir as tendências
+        const hashtagCount = {};
+        answer.data.forEach((post) => {
+          const hashtags = post.description.match(/#\w+/g);
+          if (hashtags) {
+            hashtags.forEach((tag) => {
+              if (hashtagCount[tag]) {
+                hashtagCount[tag]++;
+              } else {
+                hashtagCount[tag] = 1;
+              }
+            });
+          }
+        });
+
+        // Ordenar as hashtags com base na contagem
+        const sortedHashtags = Object.keys(hashtagCount).sort(
+          (a, b) => hashtagCount[b] - hashtagCount[a]
+        );
+
+        // Definir as tendências como as hashtags mais frequentes
+        setTrendingHashtags(sortedHashtags.slice(0, 10)); // Mostra as 10 mais frequentes
       })
       .catch((error) => {
         alert("An error occured while trying to fetch the posts, please refresh the page");
@@ -42,7 +66,10 @@ export default function Timeline() {
 
     if (alreadyLiked) {
       axios
-        .delete(`${process.env.REACT_APP_API_URL}/posts/${postId}/like`, authorization) // Quando o back for deploy, adicionar o link no .env e alterar aqui
+        .delete(
+          `${process.env.REACT_APP_API_URL}/posts/${postId}/like`,
+          authorization
+        ) // Quando o back for deploy, adicionar o link no .env e alterar aqui
         .then(() => {
           setLiked((prevLiked) => ({
             ...prevLiked,
@@ -58,7 +85,11 @@ export default function Timeline() {
         });
     } else {
       axios
-        .post(`${process.env.REACT_APP_API_URL}/posts/${postId}/like`, {}, authorization) // Quando o back for deploy, adicionar o link no .env e alterar aqui
+        .post(
+          `${process.env.REACT_APP_API_URL}/posts/${postId}/like`,
+          {},
+          authorization
+        ) // Quando o back for deploy, adicionar o link no .env e alterar aqui
         .then(() => {
           setLiked((prevLiked) => ({
             ...prevLiked,
@@ -180,16 +211,7 @@ export default function Timeline() {
                   />
                   <h3
                     data-tooltip-id="my-tooltip"
-                    data-tooltip-content={
-                      post.likes === 0
-                        ? "Ninguém curtiu ainda"
-                        : post.likes === 1 && liked
-                        ? "Você curtiu"
-                        : post.likes === 1
-                        ? "Uma pessoa curtiu"
-                        : `Curtido por ${post.likes} pessoas`
-                        // Ainda falta mais verificações para ficar de acordo com o Figma, preciso de ajuda não tenho ideia
-                    }
+                    data-tooltip-content="NÃO SEI" // Preciso real de ajuda com isso, não consigo fazer uma condicional que abrange todas as possibilidades de curtidas
                     data-tooltip-place="bottom"
                   >
                     {parseInt(post.likes)} likes
@@ -211,11 +233,32 @@ export default function Timeline() {
                         </div>
                     </div>
                 </a>
+                <Tagify
+                  color="#fffff"
+                  onClick={(text, type) => console.log(text, type)}
+                >
+                  <h3>{post.description}</h3>
+                </Tagify>
+                <div className="url">
+                  <span>Oiiiieeeeee preenchendo espaço</span>
+                </div>
               </div>
             </SCPost>
           ))}
         </div>
       </SCBody>
+      <Trending>
+        <p>trending</p>
+        <Underline />
+        <Tagify // Aqui fica as trending, falta adicionar a função que leva para a página da #hashtag
+          color="#fffff"
+          onClick={(text, type) => console.log(text, type)}
+        >
+          {trendingHashtags.map((tag, index) => (
+            <h2 key={index}>{tag}</h2>
+          ))}
+        </Tagify>
+      </Trending>
     </SCTimeline>
   );
 }
@@ -230,12 +273,41 @@ const LikeDiv = styled.div`
   }
 `;
 
+const Underline = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: #484848;
+`;
+const Trending = styled.div`
+  margin-top: 143px;
+  border-radius: 16px;
+  height: 406px;
+  width: 300px;
+  background-color: #171717;
+  p {
+    padding-left: 15px;
+    color: white;
+    font-family: "Oswald", sans-serif !important;
+    font-family: "Passion One", cursive;
+    font-weight: 700;
+    font-size: 35px;
+    line-height: 64px;
+  }
+  h2 {
+    font-family: "Lato", sans-serif;
+    color: white;
+    font-size: 23px;
+    font-weight: 700;
+    letter-spacing: 3px;
+  }
+`;
 const LikeButton = styled.div``;
 
 const SCTimeline = styled.div`
   height: 100%;
   margin-top: 72px;
   display: flex;
+  gap: 30px;
   justify-content: center;
   background-color: rgba(51, 51, 51, 1);
 `;
@@ -417,6 +489,8 @@ const SCPost = styled.div`
     margin-bottom: 10px;
     
     span {
+
+    h3 {
       font-family: "Lato", sans-serif !important;
       font-size: 17px;
       line-height: 21px;
@@ -425,6 +499,10 @@ const SCPost = styled.div`
     h2 {
       font-size: 17px;
       font-family: "Lato", sans-serif !important;
+    }
+    span {
+      color: white;
+      font-size: 18px;
     }
   }
 
