@@ -15,7 +15,7 @@ export default function Timeline() {
   const [description, setDescription] = useState('');
   const [textButton, setTextButton] = useState('Publish');
   const [disabled, setDisabled] = useState(false);
-  let controle = 0;
+  const [controle, setControle] = useState(0);
   const { auth } = useAuth();
   const navigate = useNavigate();
 
@@ -30,6 +30,8 @@ export default function Timeline() {
   const [trendingHashtags, setTrendingHashtags] = useState([]);
 
   useEffect(() => {
+
+    console.log('oooiiiiiii')
 
     if(!auth){
       navigate('/')
@@ -67,7 +69,7 @@ export default function Timeline() {
       .catch((error) => {
         alert("An error occured while trying to fetch the posts, please refresh the page");
       });
-  }, [posts, controle]);
+  }, [controle]);
 
   // Pretendo componentizar isso quando eu descobrir como
   const handleLikeClick = (postId) => {
@@ -127,7 +129,7 @@ export default function Timeline() {
           setUrl('');
           setTextButton('Publish');
           setDisabled(false);
-          controle++;
+          setControle(controle+1);
         })
         .catch(err => {
           alert("Houve um erro ao publicar seu link");
@@ -246,11 +248,8 @@ export default function Timeline() {
                   color="#fffff"
                   onClick={(text, type) => console.log(text, type)}
                 >
-                  <h3>{post.description}</h3>
+
                 </Tagify>
-                <div className="url">
-                  <span>Oiiiieeeeee preenchendo espaço</span>
-                </div>
               </div>
             </SCPost>
           ))}
@@ -456,7 +455,7 @@ const SCBody = styled.div`
 const SCPost = styled.div`
   width: 100%;
   display: flex;
-  min-height: 276px;
+  min-height: 206px;
   border-radius: 16px;
   background-color: rgba(23, 23, 23, 1);
   color: white;
