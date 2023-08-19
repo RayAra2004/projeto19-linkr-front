@@ -1,6 +1,8 @@
 import { styled } from "styled-components";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FiSearch } from 'react-icons/fi';
+
 
 
 export default function Header() {
@@ -24,18 +26,24 @@ export default function Header() {
         <Link to="/timeline">
           <Logo className="logo">linkr</Logo>
         </Link>
+        <BarraPesquisaContainer>
+          <BarraPesquisa type="text" placeholder="Search for people" />
+          <SearchIcon>
+            <FiSearch />  {/* aplica a função de pesquisar aqui nesse Icon */}
+          </SearchIcon>
+        </BarraPesquisaContainer>
         <div className="barra" onClick={toggleMenu}>
           <ion-icon
             name={openButton ? "chevron-up-outline" : "chevron-down-outline"}
           ></ion-icon>
-          <img src="https://source.unsplash.com/random" alt=""  />
+          <img src="https://source.unsplash.com/random" alt="" />
         </div>
       </SCHeader>
       {openButton && (
         <LogoutButton onClick={activeLogout}>
-            <LogoutText>
-              Logout
-            </LogoutText>
+          <LogoutText>
+            Logout
+          </LogoutText>
         </LogoutButton>
       )}
     </>
@@ -91,8 +99,42 @@ const SCHeader = styled.div`
       cursor: pointer;
     }
   }
+
 `;
 
+const BarraPesquisa = styled.input`
+    width: 370px;
+    height: 50px;
+    border-radius: 8px;
+    letter-spacing: 0em;
+    text-align: left;
+    font-family: "Lato", sans-serif !important;
+    font-family: "Passion One", cursive;
+    font-size: 20px;
+    line-height: 24px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 15px;
+`
+const BarraPesquisaContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: relative;
+`;
+
+const SearchIcon = styled.div`
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #969494;
+  cursor: pointer;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #333333;
+  }
+`;
 
 
 const commonStyle = `
