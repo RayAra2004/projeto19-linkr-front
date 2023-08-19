@@ -6,29 +6,24 @@ import { Tooltip } from "react-tooltip";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Contexts/Context";
+import { Link } from "react-router-dom";
 
-export default function Timeline() {
-  const { setTrendings } = useContext(Context);
-  const [liked, setLiked] = useState(false);
+export default function TrendingPage() {
+  const { trendings } = useContext(Context);
+  const [liked, setLiked] = useState({});
   const [posts, setPosts] = useState(undefined);
-  const [url, setUrl] = useState("");
-  const [description, setDescription] = useState("");
-  const [textButton, setTextButton] = useState("Publish");
-  const [disabled, setDisabled] = useState(false);
-  const [controle, setControle] = useState(0);
+  const [controle] = useState(0);
   const { auth } = useAuth();
   const navigate = useNavigate();
+  const { hashtag } = useParams();
 
   const authorization = {
     headers: {
       Authorization: `Bearer ${auth}`,
     },
   };
-
-  // Estado para armazenar as tendências
-  const [trendingHashtags, setTrendingHashtags] = useState([]);
 
   useEffect(() => {
     if (!auth) {
@@ -38,36 +33,20 @@ export default function Timeline() {
     }
 
     axios
-      .get(`${process.env.REACT_APP_API_URL}/posts`)
+      .get(`${process.env.REACT_APP_API_URL}/hashtag/${hashtag}`)
       .then((answer) => {
-        setPosts(answer.data);
-        const hashtagCount = {};
-        answer.data.forEach((post) => {
-          const hashtags = post.description.match(/#\w+/g);
-          if (hashtags) {
-            hashtags.forEach((tag) => {
-              if (hashtagCount[tag]) {
-                hashtagCount[tag]++;
-              } else {
-                hashtagCount[tag] = 1;
-              }
-            });
-          }
-        });
-
-        const sortedHashtags = Object.keys(hashtagCount).sort(
-          (a, b) => hashtagCount[b] - hashtagCount[a]
-        );
-
-        setTrendingHashtags(sortedHashtags.slice(0, 10));
-        setTrendings(sortedHashtags.slice(0, 10));
+        const postsWithLikedStatus = answer.data.map((post) => ({
+          ...post,
+          liked: post.likedUsers.includes(auth),
+        }));
+        setPosts(postsWithLikedStatus);
       })
       .catch((error) => {
         alert(
-          "An error occured while trying to fetch the posts, please refresh the page"
+          "An error occurred while trying to fetch the posts, please refresh the page"
         );
       });
-  }, [auth, controle, navigate, setTrendings]);
+  }, [hashtag, auth, controle, navigate]);
 
   const handleLikeClick = (postId) => {
     const alreadyLiked = liked[postId];
@@ -86,7 +65,7 @@ export default function Timeline() {
           setPosts((prevPosts) => {
             return prevPosts.map((post) =>
               post.id === postId
-                ? { ...post, likes: parseInt(post.likes) - 1 }
+                ? { ...post, likes: parseInt(post.likes) - 1, liked: false }
                 : post
             );
           });
@@ -106,39 +85,13 @@ export default function Timeline() {
           setPosts((prevPosts) => {
             return prevPosts.map((post) =>
               post.id === postId
-                ? { ...post, likes: parseInt(post.likes) + 1 }
+                ? { ...post, likes: parseInt(post.likes) + 1, liked: true }
                 : post
             );
           });
         });
     }
   };
-
-  function publish(e) {
-    e.preventDefault();
-
-    setTextButton("Publishing...");
-    setDisabled(true);
-
-    axios
-      .post(
-        `${process.env.REACT_APP_API_URL}/post`,
-        { url, description },
-        authorization
-      )
-      .then((res) => {
-        setDescription("");
-        setUrl("");
-        setTextButton("Publish");
-        setDisabled(false);
-        setControle(controle + 1);
-      })
-      .catch((err) => {
-        alert("Houve um erro ao publicar seu link");
-        setTextButton("Publish");
-        setDisabled(false);
-      });
-  }
 
   const handleTooltipContent = (post) => {
     const totalLikes = parseInt(post.likes);
@@ -171,21 +124,9 @@ export default function Timeline() {
         <Header />
         <SCBody>
           <div className="timeline">
-            <p>timeline</p>
+            <p># {hashtag}</p>
           </div>
-          <div className="publish">
-            <div className="user_picture">
-              <img src="https://source.unsplash.com/random" alt="" />
-            </div>
-            <div className="post-confirm">
-              <p>What are you going to share today?</p>
-              <form>
-                <input placeholder="http:// ..." />
-                <input placeholder="Awesome article about #javascript" />
-                <button>{textButton}</button>
-              </form>
-            </div>
-          </div>
+
           <div className="published">
             <p className="loading">Loading</p>
           </div>
@@ -199,31 +140,7 @@ export default function Timeline() {
       <Header />
       <SCBody>
         <div className="timeline">
-          <p>timeline</p>
-        </div>
-        <div className="publish">
-          <div className="user_picture">
-            <img src="https://source.unsplash.com/random" alt="" />
-          </div>
-          <div className="post-confirm">
-            <p>What are you going to share today?</p>
-            <form onSubmit={(e) => publish(e)}>
-              <input
-                placeholder="http:// ..."
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                disabled={disabled}
-                required
-              />
-              <input
-                placeholder="Awesome article about #javascript"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                disabled={disabled}
-              />
-              <button {...disabled}>{textButton}</button>
-            </form>
-          </div>
+          <p># {hashtag}</p>
         </div>
         <div className="published">
           {posts.map((post) => (
@@ -233,7 +150,7 @@ export default function Timeline() {
 
                 <LikeDiv className="like">
                   <LikeButton onClick={() => handleLikeClick(post.id)}>
-                    {liked[post.id] ? (
+                    {post.liked ? ( // Verifica o estado liked do post
                       <FaHeart color="red" size={20} />
                     ) : (
                       <FaRegHeart color="white" size={20} />
@@ -299,7 +216,7 @@ export default function Timeline() {
           color="#fffff"
           onClick={(text, type) => console.log(text, type)}
         >
-          {trendingHashtags.map((tag, index) => (
+          {trendings.map((tag, index) => (
             <Link to={`/hashtag/${tag.replace("#", "")}`}>
               <h2 key={index}>{tag}</h2>
             </Link>
