@@ -16,10 +16,10 @@ export default function Timeline() {
   const [description, setDescription] = useState("");
   const [textButton, setTextButton] = useState("Publish");
   const [disabled, setDisabled] = useState(false);
-  const [controle, setControle] = useState(0);
   const { auth } = useAuth();
   const [trendingHashtags, setTrendingHashtags] = useState([]);
   const navigate = useNavigate();
+  const [atualizar, setAtualizar] = useState(0);
 
   const authorization = {
     headers: {
@@ -33,6 +33,7 @@ export default function Timeline() {
       alert("Faça o Login!");
       return;
     }
+    console.log("atualizando pagina... kk")
 
     axios
       .get(`${process.env.REACT_APP_API_URL}/posts`)
@@ -64,7 +65,7 @@ export default function Timeline() {
           "An error occured while trying to fetch the posts, please refresh the page"
         );
       });
-  }, [auth, navigate, setTrendings]);
+  }, [auth, navigate, setTrendings, atualizar]);
 
   function publish(e) {
     e.preventDefault();
@@ -83,7 +84,7 @@ export default function Timeline() {
         setUrl("");
         setTextButton("Publish");
         setDisabled(false);
-        setControle(controle + 1);
+        setAtualizar(atualizar + 1);
       })
       .catch((err) => {
         alert("Houve um erro ao publicar seu link");
@@ -159,7 +160,7 @@ export default function Timeline() {
         <div className="published">
           {/* TODO: Trocar para componente */}
           {posts &&
-            posts.map((p) => <Post post={p} setPosts={setPosts} url={url} />)}
+            posts.map((p) => <Post setAtualizar={setAtualizar} atualizar={atualizar} post={p} setPosts={setPosts} url={url} />)}
         </div>
       </SCBody>
       <Trending>

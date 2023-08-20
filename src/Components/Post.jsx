@@ -1,22 +1,71 @@
 import  styled  from "styled-components";
 import { Tooltip } from "react-tooltip";
 import { FaEdit, FaHeart, FaRegHeart, FaTrash } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
 
-export default function Post({ post, setPosts }) {
+export default function Post({ post, setPosts, atualizar, setAtualizar }) {
   const [liked, setLiked] = useState(false);
   const { auth } = useAuth();
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [newDescription, setNewDescription] = useState(post.description);
+  const descriptionInputRef = useRef(null);
 
-  console.log(post);
+  useEffect(() => {
+    if (openEdit) {
+      descriptionInputRef.current.focus(); // Focar quando a edição é ativada
+    }
+  }, [openEdit]);
 
   const authorization = {
     headers: {
       Authorization: `Bearer ${auth}`,
     },
   };
+
+  function editPost(){
+    if(openEdit === true){
+      setOpenEdit(false);
+    }else{
+      setOpenEdit(true);
+    }
+  }
+  function deletePost(){
+    if(openDelete === true){
+      setOpenDelete(false);
+    }else{
+      setOpenDelete(true);
+    }
+  }
+
+  function sendEdit(e, postId){
+
+    const body = {
+      description: newDescription
+    }
+
+    if(e.key === "Enter" || e.keyCode === 13){
+      axios
+        .put(
+          `${process.env.REACT_APP_API_URL}/post/edit/${postId}`, body, authorization
+        ).then((answer) => {
+          console.log(answer);
+          setAtualizar(atualizar + 1)
+          setOpenEdit(false);
+        })
+        .catch((error) => {
+          alert("Erro ao Editar o Post!")
+          console.log(error.message);
+          
+        });
+  }
+  if(e.key === "Escape" || e.keyCode === 27){
+    setOpenEdit(false);
+  }
+}
 
   const handleLikeClick = (postId) => {
     const alreadyLiked = liked[postId];
@@ -120,15 +169,15 @@ export default function Post({ post, setPosts }) {
       </div>
       <ManageButtons>
         <EditIcon>
-          <FaEdit color="white" size={20} />
+          <FaEdit onClick={editPost} color="white" size={20} />
         </EditIcon>
         <DeleteIcon>
-          <FaTrash color="white" size={20} />
+          <FaTrash onClick={deletePost} color="white" size={20} />
         </DeleteIcon>
       </ManageButtons>
       <div className="description">
         <h2>{post.username}</h2>
-        <span>{post.description}</span>
+        {openEdit === true ? <input ref={descriptionInputRef} defaultValue={post.description} value={newDescription} onChange={(e) => setNewDescription(e.target.value)} onKeyDown={e => {sendEdit(e, post.id)}} type="text" /> : <span>{post.description}</span>}
         <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">
           <div className="url">
             <div className="data">
