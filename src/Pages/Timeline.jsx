@@ -96,7 +96,7 @@ export default function Timeline() {
       <SCTimeline>
         <Header />
         <SCBody>
-          <div className="timeline">
+        <div className="timeline">
             <p>timeline</p>
           </div>
           <div data-test="publish-box" className="publish">
@@ -105,25 +105,21 @@ export default function Timeline() {
             </div>
             <div className="post-confirm">
               <p>What are you going to share today?</p>
-              <form onSubmit={(e) => publish(e)}>
-                <input
-                  data-test="link"
-                  placeholder="http:// ..."
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  disabled={disabled}
-                  required
-                />
-                <input
-                  data-test="description"
-                  placeholder="Awesome article about #javascript"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  disabled={disabled}
-                />
+              <form>
+                <input data-test="link"
+                placeholder="http:// ..."
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                disabled={disabled}
+                required/>
+                <input data-test="description"
+                placeholder="Awesome article about #javascript"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                disabled={disabled}/>
                 <button data-test="publish-btn" {...disabled}>
-                  {textButton}
-                </button>
+                {textButton}
+              </button>
               </form>
             </div>
           </div>
@@ -151,25 +147,21 @@ export default function Timeline() {
             </div>
             <div className="post-confirm">
               <p>What are you going to share today?</p>
-              <form onSubmit={(e) => publish(e)}>
-                <input
-                  data-test="link"
-                  placeholder="http:// ..."
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  disabled={disabled}
-                  required
-                />
-                <input
-                  data-test="description"
-                  placeholder="Awesome article about #javascript"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  disabled={disabled}
-                />
+              <form>
+                <input data-test="link"
+                placeholder="http:// ..."
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                disabled={disabled}
+                required/>
+                <input data-test="description"
+                placeholder="Awesome article about #javascript"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                disabled={disabled}/>
                 <button data-test="publish-btn" {...disabled}>
-                  {textButton}
-                </button>
+                {textButton}
+              </button>
               </form>
             </div>
           </div>
@@ -188,7 +180,7 @@ export default function Timeline() {
       <SCTimeline>
         <Header />
         <SCBody>
-          <div className="timeline">
+        <div className="timeline">
             <p>timeline</p>
           </div>
           <div data-test="publish-box" className="publish">
@@ -197,25 +189,21 @@ export default function Timeline() {
             </div>
             <div className="post-confirm">
               <p>What are you going to share today?</p>
-              <form onSubmit={(e) => publish(e)}>
-                <input
-                  data-test="link"
-                  placeholder="http:// ..."
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  disabled={disabled}
-                  required
-                />
-                <input
-                  data-test="description"
-                  placeholder="Awesome article about #javascript"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  disabled={disabled}
-                />
+              <form>
+                <input data-test="link"
+                placeholder="http:// ..."
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                disabled={disabled}
+                required/>
+                <input data-test="description"
+                placeholder="Awesome article about #javascript"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                disabled={disabled}/>
                 <button data-test="publish-btn" {...disabled}>
-                  {textButton}
-                </button>
+                {textButton}
+              </button>
               </form>
             </div>
           </div>
