@@ -7,25 +7,18 @@ import { useNavigate } from "react-router-dom";
 import Post from "../Components/Post";
 import { Context } from "../Contexts/Context";
 import Trending from "../Components/Trending";
+import PublishPost from "../Components/PublishPost";
 
 export default function Timeline() {
   const [posts, setPosts] = useState(undefined);
   const { setTrendings } = useContext(Context);
-  const [url, setUrl] = useState("");
-  const [description, setDescription] = useState("");
-  const [textButton, setTextButton] = useState("Publish");
-  const [disabled, setDisabled] = useState(false);
   const { auth } = useAuth();
   const [trendingHashtags, setTrendingHashtags] = useState([]);
   const navigate = useNavigate();
   const [atualizar, setAtualizar] = useState(0);
   const [error, setError] = useState(false);
 
-  const authorization = {
-    headers: {
-      Authorization: `Bearer ${auth}`,
-    },
-  };
+  
 
   useEffect(() => {
     if (!auth) {
@@ -65,31 +58,7 @@ export default function Timeline() {
       });
   }, [auth, navigate, setTrendings, atualizar]);
 
-  function publish(e) {
-    e.preventDefault();
-
-    setTextButton("Publishing...");
-    setDisabled(true);
-
-    axios
-      .post(
-        `${process.env.REACT_APP_API_URL}/post`,
-        { url, description },
-        authorization
-      )
-      .then((res) => {
-        setDescription("");
-        setUrl("");
-        setTextButton("Publish");
-        setDisabled(false);
-        setAtualizar(atualizar + 1);
-      })
-      .catch((err) => {
-        alert("Houve um erro ao publicar seu link");
-        setTextButton("Publish");
-        setDisabled(false);
-      });
-  }
+  
 
   if (error) {
     return (
@@ -99,30 +68,7 @@ export default function Timeline() {
         <div className="timeline">
             <p>timeline</p>
           </div>
-          <div data-test="publish-box" className="publish">
-            <div className="user_picture">
-              <img src="https://source.unsplash.com/random" alt="" />
-            </div>
-            <div className="post-confirm">
-              <p>What are you going to share today?</p>
-              <form>
-                <input data-test="link"
-                placeholder="http:// ..."
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                disabled={disabled}
-                required/>
-                <input data-test="description"
-                placeholder="Awesome article about #javascript"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                disabled={disabled}/>
-                <button data-test="publish-btn" {...disabled}>
-                {textButton}
-              </button>
-              </form>
-            </div>
-          </div>
+          <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
           <div className="published">
             <p className="loading" data-test="message">
               There are no posts yet
@@ -141,30 +87,7 @@ export default function Timeline() {
           <div className="timeline">
             <p>timeline</p>
           </div>
-          <div data-test="publish-box" className="publish">
-            <div className="user_picture">
-              <img src="https://source.unsplash.com/random" alt="" />
-            </div>
-            <div className="post-confirm">
-              <p>What are you going to share today?</p>
-              <form>
-                <input data-test="link"
-                placeholder="http:// ..."
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                disabled={disabled}
-                required/>
-                <input data-test="description"
-                placeholder="Awesome article about #javascript"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                disabled={disabled}/>
-                <button data-test="publish-btn" {...disabled}>
-                {textButton}
-              </button>
-              </form>
-            </div>
-          </div>
+          <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
           <div className="published">
             <p className="loading" data-test="message">
               There are no posts yet
@@ -180,33 +103,10 @@ export default function Timeline() {
       <SCTimeline>
         <Header />
         <SCBody>
-        <div className="timeline">
+          <div className="timeline">
             <p>timeline</p>
           </div>
-          <div data-test="publish-box" className="publish">
-            <div className="user_picture">
-              <img src="https://source.unsplash.com/random" alt="" />
-            </div>
-            <div className="post-confirm">
-              <p>What are you going to share today?</p>
-              <form>
-                <input data-test="link"
-                placeholder="http:// ..."
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                disabled={disabled}
-                required/>
-                <input data-test="description"
-                placeholder="Awesome article about #javascript"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                disabled={disabled}/>
-                <button data-test="publish-btn" {...disabled}>
-                {textButton}
-              </button>
-              </form>
-            </div>
-          </div>
+          <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
           <div className="published">
             <p className="loading" data-test="message">
               There are no posts yet
@@ -224,36 +124,8 @@ export default function Timeline() {
         <div className="timeline">
           <p>timeline</p>
         </div>
-        <div data-test="publish-box" className="publish">
-          <div className="user_picture">
-            <img src="https://source.unsplash.com/random" alt="" />
-          </div>
-          <div className="post-confirm">
-            <p>What are you going to share today?</p>
-            <form onSubmit={(e) => publish(e)}>
-              <input
-                data-test="link"
-                placeholder="http:// ..."
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                disabled={disabled}
-                required
-              />
-              <input
-                data-test="description"
-                placeholder="Awesome article about #javascript"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                disabled={disabled}
-              />
-              <button data-test="publish-btn" {...disabled}>
-                {textButton}
-              </button>
-            </form>
-          </div>
-        </div>
+        <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
         <div className="published">
-          {/* TODO: Trocar para componente */}
           {posts &&
             posts.map((p) => (
               <Post
@@ -261,7 +133,6 @@ export default function Timeline() {
                 atualizar={atualizar}
                 post={p}
                 setPosts={setPosts}
-                url={url}
               />
             ))}
         </div>

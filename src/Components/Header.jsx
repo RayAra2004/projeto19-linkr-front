@@ -12,7 +12,7 @@ export default function Header() {
   const [search, setSearch] = useState("");
   const { users, setUsers } = useContext(ContextSearch);
   const navigate = useNavigate();
-  const { auth } = useAuth();
+  const { auth, user } = useAuth();
 
   const authorization = {
     headers: {
@@ -42,7 +42,7 @@ export default function Header() {
         .then((res) => {
           setUsers(res.data);
 
-          console.log(res.data);
+
         })
         .catch((err) => console.log(err));
     } else {
@@ -88,7 +88,7 @@ export default function Header() {
           <ion-icon
             name={openButton ? "chevron-up-outline" : "chevron-down-outline"}
           ></ion-icon>
-          <img src="https://source.unsplash.com/random" alt="" />
+          <img src={user.picture} alt={user.username} />
         </div>
       </SCHeader>
       {openButton && (
