@@ -13,7 +13,7 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [newDescription, setNewDescription] = useState(post.description);
   const descriptionInputRef = useRef(null);
-  console.log(post);
+
 
   useEffect(() => {
     if (openEdit) {
@@ -51,7 +51,7 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
           authorization
         )
         .then((answer) => {
-          console.log(answer);
+
           setAtualizar(atualizar + 1);
           setOpenEdit(false);
         })
@@ -71,7 +71,6 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
         authorization
       )
       .then((answer) => {
-        console.log(answer);
         alert("Post deletado com sucessso!")
         console.log(`Post ${postId} excluído`);
         setAtualizar(atualizar + 1);
