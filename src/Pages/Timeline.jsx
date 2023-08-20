@@ -91,8 +91,8 @@ export default function Timeline() {
       });
   }
 
-  if(error){
-    return(
+  if (error) {
+    return (
       <SCTimeline>
         <Header />
         <SCBody>
@@ -124,15 +124,17 @@ export default function Timeline() {
             </div>
           </div>
           <div className="published">
-            <p className="loading">An error occured while trying to fetch the posts, please refresh the page</p>
+            <p className="loading" data-test="message">
+              There are no posts yet
+            </p>
           </div>
         </SCBody>
       </SCTimeline>
-    )
+    );
   }
 
   if (posts && posts.length === 0) {
-    return(
+    return (
       <SCTimeline>
         <Header />
         <SCBody>
@@ -164,11 +166,13 @@ export default function Timeline() {
             </div>
           </div>
           <div className="published">
-            <p className="loading" data-test="message" >There are no posts yet</p>
+            <p className="loading" data-test="message">
+              There are no posts yet
+            </p>
           </div>
         </SCBody>
       </SCTimeline>
-    )
+    );
   }
 
   if (posts === undefined) {
@@ -204,7 +208,9 @@ export default function Timeline() {
             </div>
           </div>
           <div className="published">
-            <p className="loading">Loading</p>
+            <p className="loading" data-test="message">
+              There are no posts yet
+            </p>
           </div>
         </SCBody>
       </SCTimeline>
