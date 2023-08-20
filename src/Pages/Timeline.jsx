@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import Post from "../Components/Post";
 import { Link} from "react-router-dom";
 import { Context } from "../Contexts/Context";
+
+
 export default function Timeline() {
   const [posts, setPosts] = useState(undefined);
   const { setTrendings } = useContext(Context);
@@ -36,7 +38,7 @@ export default function Timeline() {
       alert("Faça o Login!")
       return
     }
-
+  
     axios
       .get(`${process.env.REACT_APP_API_URL}/posts`)
       .then((answer) => {
@@ -54,7 +56,7 @@ export default function Timeline() {
             });
           }
         });
-
+        
         const sortedHashtags = Object.keys(hashtagCount).sort(
           (a, b) => hashtagCount[b] - hashtagCount[a]
         );
@@ -67,8 +69,8 @@ export default function Timeline() {
           "An error occured while trying to fetch the posts, please refresh the page"
         );
       });
-  }, [auth, controle, navigate, setTrendings]);
-
+  }, [auth, navigate, setTrendings]);
+  
   function publish(e) {
     e.preventDefault();
 
@@ -102,7 +104,7 @@ export default function Timeline() {
   if (posts === undefined) {
     return (
       <SCTimeline>
-        <Header />
+        <Header/>
         <SCBody>
           <div className="timeline">
             <p>timeline</p>

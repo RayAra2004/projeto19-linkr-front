@@ -14,7 +14,6 @@ export default function TrendingPage() {
   const { trendings } = useContext(Context);
   const [liked, setLiked] = useState({});
   const [posts, setPosts] = useState(undefined);
-  const [controle] = useState(0);
   const { auth } = useAuth();
   const navigate = useNavigate();
   const { hashtag } = useParams();
@@ -46,7 +45,7 @@ export default function TrendingPage() {
           "An error occurred while trying to fetch the posts, please refresh the page"
         );
       });
-  }, [hashtag, auth, controle, navigate]);
+  }, [auth, hashtag, navigate]);
 
   const handleLikeClick = (postId) => {
     const alreadyLiked = liked[postId];

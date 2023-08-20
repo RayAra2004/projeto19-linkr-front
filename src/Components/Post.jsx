@@ -10,8 +10,6 @@ export default function Post({post, setPosts}){
     const [liked, setLiked] = useState(false);
     const { auth } = useAuth();
     
-    console.log(post)
-    
     const authorization = {
         headers: {
           Authorization: `Bearer ${auth}`,
@@ -63,8 +61,6 @@ export default function Post({post, setPosts}){
             });
         }
     };
-
-    console.log(post.metadataUrl)
 
     return(
         <SCPost key={post.id} className="post">
