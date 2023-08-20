@@ -6,7 +6,7 @@ import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
 
-export default function Post({ post, setPosts, atualizar, setAtualizar }) {
+export default function Post({ post, setPosts, atualizar, setAtualizar, permission }) {
   const [liked, setLiked] = useState(false);
   const { auth, user } = useAuth();
   const [openEdit, setOpenEdit] = useState(false);
@@ -71,7 +71,6 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
         authorization
       )
       .then((answer) => {
-        alert("Post deletado com sucessso!")
         console.log(`Post ${postId} excluído`);
         setAtualizar(atualizar + 1);
         setShowDeleteModal(false); // Fechar o modal após a exclusão
@@ -195,24 +194,27 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
           </h3>
         </LikeDiv>
       </div>
-      <ManageButtons>
-        <EditIcon>
-          <FaEdit
-            data-test="edit-btn"
-            onClick={editPost}
-            color="white"
-            size={20}
-          />
-        </EditIcon>
-        <DeleteIcon>
-          <FaTrash
-            data-test="delete-btn"
-            onClick={deletePost}
-            color="white"
-            size={20}
-          />
-        </DeleteIcon>
-      </ManageButtons>
+      { permission ? (
+        <ManageButtons>
+          <EditIcon>
+            <FaEdit
+              data-test="edit-btn"
+              onClick={editPost}
+              color="white"
+              size={20}
+            />
+          </EditIcon>
+          <DeleteIcon>
+            <FaTrash
+              data-test="delete-btn"
+              onClick={deletePost}
+              color="white"
+              size={20}
+            />
+          </DeleteIcon>
+        </ManageButtons>
+      ) : <></>}
+      
       <div className="description">
         <h2 data-test="username">{post.username}</h2>
         {openEdit === true ? (

@@ -29,6 +29,12 @@ export default function Header() {
   function toggleMenu() {
     setOpenButton(!openButton);
   }
+  
+
+  function listenerOutsiteClick(){
+    setUsers("");
+  }
+  window.addEventListener('click', listenerOutsiteClick)
 
   function startSearch(value) {
     if (value.trim().length >= 3) {
@@ -41,7 +47,7 @@ export default function Header() {
         )
         .then((res) => {
           setUsers(res.data);
-
+          console.log('oiiiii')
 
         })
         .catch((err) => console.log(err));

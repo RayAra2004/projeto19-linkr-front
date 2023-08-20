@@ -133,6 +133,7 @@ export default function Timeline() {
                 atualizar={atualizar}
                 post={p}
                 setPosts={setPosts}
+                permission = {true}
               />
             ))}
         </div>
