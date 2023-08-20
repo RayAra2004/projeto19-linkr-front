@@ -91,62 +91,96 @@ export default function Timeline() {
       });
   }
 
-  if(error){
-    return(
+  if (error) {
+    return (
       <SCTimeline>
         <Header />
         <SCBody>
           <div className="timeline">
             <p>timeline</p>
           </div>
-          <div className="publish">
+          <div data-test="publish-box" className="publish">
             <div className="user_picture">
               <img src="https://source.unsplash.com/random" alt="" />
             </div>
             <div className="post-confirm">
               <p>What are you going to share today?</p>
-              <form>
-                <input placeholder="http:// ..." />
-                <input placeholder="Awesome article about #javascript" />
-                <button>{textButton}</button>
+              <form onSubmit={(e) => publish(e)}>
+                <input
+                  data-test="link"
+                  placeholder="http:// ..."
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  disabled={disabled}
+                  required
+                />
+                <input
+                  data-test="description"
+                  placeholder="Awesome article about #javascript"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  disabled={disabled}
+                />
+                <button data-test="publish-btn" {...disabled}>
+                  {textButton}
+                </button>
               </form>
             </div>
           </div>
           <div className="published">
-            <p className="loading">An error occured while trying to fetch the posts, please refresh the page</p>
+            <p className="loading" data-test="message">
+              There are no posts yet
+            </p>
           </div>
         </SCBody>
       </SCTimeline>
-    )
+    );
   }
 
   if (posts && posts.length === 0) {
-    return(
+    return (
       <SCTimeline>
         <Header />
         <SCBody>
           <div className="timeline">
             <p>timeline</p>
           </div>
-          <div className="publish">
+          <div data-test="publish-box" className="publish">
             <div className="user_picture">
               <img src="https://source.unsplash.com/random" alt="" />
             </div>
             <div className="post-confirm">
               <p>What are you going to share today?</p>
-              <form>
-                <input placeholder="http:// ..." />
-                <input placeholder="Awesome article about #javascript" />
-                <button>{textButton}</button>
+              <form onSubmit={(e) => publish(e)}>
+                <input
+                  data-test="link"
+                  placeholder="http:// ..."
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  disabled={disabled}
+                  required
+                />
+                <input
+                  data-test="description"
+                  placeholder="Awesome article about #javascript"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  disabled={disabled}
+                />
+                <button data-test="publish-btn" {...disabled}>
+                  {textButton}
+                </button>
               </form>
             </div>
           </div>
           <div className="published">
-            <p className="loading" data-test="message" >There are no posts yet</p>
+            <p className="loading" data-test="message">
+              There are no posts yet
+            </p>
           </div>
         </SCBody>
       </SCTimeline>
-    )
+    );
   }
 
   if (posts === undefined) {
@@ -157,21 +191,38 @@ export default function Timeline() {
           <div className="timeline">
             <p>timeline</p>
           </div>
-          <div className="publish">
+          <div data-test="publish-box" className="publish">
             <div className="user_picture">
               <img src="https://source.unsplash.com/random" alt="" />
             </div>
             <div className="post-confirm">
               <p>What are you going to share today?</p>
-              <form>
-                <input placeholder="http:// ..." />
-                <input placeholder="Awesome article about #javascript" />
-                <button>{textButton}</button>
+              <form onSubmit={(e) => publish(e)}>
+                <input
+                  data-test="link"
+                  placeholder="http:// ..."
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  disabled={disabled}
+                  required
+                />
+                <input
+                  data-test="description"
+                  placeholder="Awesome article about #javascript"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  disabled={disabled}
+                />
+                <button data-test="publish-btn" {...disabled}>
+                  {textButton}
+                </button>
               </form>
             </div>
           </div>
           <div className="published">
-            <p className="loading">Loading</p>
+            <p className="loading" data-test="message">
+              There are no posts yet
+            </p>
           </div>
         </SCBody>
       </SCTimeline>
