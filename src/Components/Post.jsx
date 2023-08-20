@@ -5,8 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
+import { ThreeDots } from "react-loader-spinner";
 import { Link } from "react-router-dom";
-import { ThreeDots } from  'react-loader-spinner'
+import { ThreeDots } from  'react-loader-spinner';
 
 export default function Post({
   post,
@@ -72,7 +73,6 @@ export default function Post({
     }
   }
   function deleteConfirmation(postId) {
-
     setIsLoadingDelete(true); // Ativar carregamento
 
     axios
@@ -281,31 +281,33 @@ export default function Post({
         <DeleteModal>
           <DeleteContent>
             {isLoadingDelete ? (
-              <ThreeDots 
-              height="100"
-              width="100"
-              radius="9"
-              color="#e6e6e6"
-              ariaLabel="three-dots-loading"
-              wrapperStyle={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: "20px", // Adicione preenchimento
-              }}
-              wrapperClassName=""
-              visible={true}
-               /> // Animação de Carregamento
+              <ThreeDots
+                height="100"
+                width="100"
+                radius="9"
+                color="#e6e6e6"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: "20px", // Adicione preenchimento
+                }}
+                wrapperClassName=""
+                visible={true}
+              /> // Animação de Carregamento
             ) : (
               <div>
                 <p>Are you sure you want to delete this post?</p>
                 <button
+                  data-test="cancel"
                   className="cancelar"
                   onClick={() => setShowDeleteModal(false)}
                 >
                   No, go back
                 </button>
                 <button
+                  data-test="confirm"
                   className="deletar"
                   onClick={() => deleteConfirmation(post.id)}
                 >
