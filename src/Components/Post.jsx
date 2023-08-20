@@ -10,6 +10,7 @@ export default function Post({ post, setPosts }) {
   const [liked, setLiked] = useState(false);
   const { auth } = useAuth();
 
+
   console.log(post)
 
   const authorization = {

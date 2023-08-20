@@ -1,13 +1,26 @@
 import { styled } from "styled-components";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiSearch } from 'react-icons/fi';
+import useAuth from "../Contexts/UseAuth";
+import { DebounceInput } from 'react-debounce-input';
+import axios from "axios";
+import { ContextSearch } from "../Contexts/SerachBar";
 
 
 
 export default function Header() {
   const [openButton, setOpenButton] = useState(false);
-  const navigate = useNavigate()
+  const [search, setSearch] = useState('');
+  const { users, setUsers } = useContext(ContextSearch);
+  const navigate = useNavigate();
+  const { auth } = useAuth();
+
+  const authorization = {
+    headers: {
+      Authorization: `Bearer ${auth}`,
+    },
+  };
 
 
   function activeLogout() {
@@ -20,6 +33,22 @@ export default function Header() {
     setOpenButton(!openButton);
   }
 
+  function startSearch(value){
+      if(value.trim().length >= 3){
+        setSearch(value); 
+        axios.post(`${process.env.REACT_APP_API_URL}/searchUser`, {user: value}, authorization)
+        .then(res => {
+          setUsers(res.data);
+          
+          console.log(res.data)
+        })
+        .catch(err => console.log(err))
+      }else{
+        setUsers('')
+      }
+      
+  }
+
   return (
     <>
       <SCHeader>
@@ -27,10 +56,20 @@ export default function Header() {
           <Logo className="logo">linkr</Logo>
         </Link>
         <BarraPesquisaContainer>
-          <BarraPesquisa type="text" placeholder="Search for people" />
+          <DebounceInput className="input" type="text" placeholder="Search for people" minLength={3} debounceTimeout={300} value={search} onChange={e => {startSearch(e.target.value)}}/>
           <SearchIcon>
-            <FiSearch />  {/* aplica a função de pesquisar aqui nesse Icon */}
+            <FiSearch />
           </SearchIcon>
+          <SCResults results = {users}>
+            {users && users.map(result =>
+              <Link to={`/user/${result.id}`}>
+                <SCDivUser key={result.id}>
+                  <img src={result.picture} alt={result.username}/>
+                  <p>{result.username}</p>
+                </SCDivUser>
+              </Link>
+            )}
+          </SCResults>
         </BarraPesquisaContainer>
         <div className="barra" onClick={toggleMenu}>
           <ion-icon
@@ -102,7 +141,12 @@ const SCHeader = styled.div`
 
 `;
 
-const BarraPesquisa = styled.input`
+const BarraPesquisaContainer = styled.div`
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  .input{
     width: 370px;
     height: 50px;
     border-radius: 8px;
@@ -115,11 +159,7 @@ const BarraPesquisa = styled.input`
     margin-top: 10px;
     margin-bottom: 10px;
     padding-left: 15px;
-`
-const BarraPesquisaContainer = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
+  }
 `;
 
 const SearchIcon = styled.div`
@@ -135,6 +175,41 @@ const SearchIcon = styled.div`
     color: #333333;
   }
 `;
+
+const SCResults = styled.div`
+  position: absolute;
+  top: 53px;
+  background-color: #E7E7E7;
+  width: 369px;
+  border-radius: 0px 0px 8px 8px;
+  display: ${props => {
+    if(props.results && props.results.length > 0){
+      return 'flex !important'
+    }else{
+      return "none!important"
+    }
+  }};
+  flex-direction: column;
+  padding-left: 20px;
+  padding-top: 10px;
+  
+  a{
+    width: 100%;
+  }
+`
+
+const SCDivUser = styled.div`
+  width: 100%;
+  margin-bottom: 10px;
+
+  img{
+    margin-right: 10px;
+  }
+
+  p{
+    color: black;
+  }
+`
 
 
 const commonStyle = `
