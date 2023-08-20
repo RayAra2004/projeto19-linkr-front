@@ -19,6 +19,7 @@ export default function Timeline() {
   const [trendingHashtags, setTrendingHashtags] = useState([]);
   const navigate = useNavigate();
   const [atualizar, setAtualizar] = useState(0);
+  const [error, setError] = useState(false);
 
   const authorization = {
     headers: {
@@ -60,9 +61,7 @@ export default function Timeline() {
         setTrendings(sortedHashtags.slice(0, 10));
       })
       .catch((error) => {
-        alert(
-          "An error occured while trying to fetch the posts, please refresh the page"
-        );
+        setError(true);
       });
   }, [auth, navigate, setTrendings, atualizar]);
 
@@ -92,8 +91,62 @@ export default function Timeline() {
       });
   }
 
+  if(error){
+    return(
+      <SCTimeline>
+        <Header />
+        <SCBody>
+          <div className="timeline">
+            <p>timeline</p>
+          </div>
+          <div className="publish">
+            <div className="user_picture">
+              <img src="https://source.unsplash.com/random" alt="" />
+            </div>
+            <div className="post-confirm">
+              <p>What are you going to share today?</p>
+              <form>
+                <input placeholder="http:// ..." />
+                <input placeholder="Awesome article about #javascript" />
+                <button>{textButton}</button>
+              </form>
+            </div>
+          </div>
+          <div className="published">
+            <p className="loading">An error occured while trying to fetch the posts, please refresh the page</p>
+          </div>
+        </SCBody>
+      </SCTimeline>
+    )
+  }
+
   if (posts && posts.length === 0) {
-    alert("There are no posts yet");
+    return(
+      <SCTimeline>
+        <Header />
+        <SCBody>
+          <div className="timeline">
+            <p>timeline</p>
+          </div>
+          <div className="publish">
+            <div className="user_picture">
+              <img src="https://source.unsplash.com/random" alt="" />
+            </div>
+            <div className="post-confirm">
+              <p>What are you going to share today?</p>
+              <form>
+                <input placeholder="http:// ..." />
+                <input placeholder="Awesome article about #javascript" />
+                <button>{textButton}</button>
+              </form>
+            </div>
+          </div>
+          <div className="published">
+            <p className="loading" data-test="message" >There are no posts yet</p>
+          </div>
+        </SCBody>
+      </SCTimeline>
+    )
   }
 
   if (posts === undefined) {
