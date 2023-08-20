@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import  styled  from "styled-components";
 import Header from "../Components/Header";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";

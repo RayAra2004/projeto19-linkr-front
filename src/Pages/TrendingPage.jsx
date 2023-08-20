@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import  styled  from "styled-components";
 import Header from "../Components/Header";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";

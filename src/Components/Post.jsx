@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import  styled  from "styled-components";
 import { Tooltip } from "react-tooltip";
 import { FaEdit, FaHeart, FaRegHeart, FaTrash } from "react-icons/fa";
 import { useState } from "react";

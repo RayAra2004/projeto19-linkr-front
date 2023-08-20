@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import  styled  from "styled-components";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiSearch } from 'react-icons/fi';
