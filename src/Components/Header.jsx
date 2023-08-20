@@ -1,17 +1,15 @@
-import  styled  from "styled-components";
+import styled from "styled-components";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch } from "react-icons/fi";
 import useAuth from "../Contexts/UseAuth";
-import { DebounceInput } from 'react-debounce-input';
+import { DebounceInput } from "react-debounce-input";
 import axios from "axios";
 import { ContextSearch } from "../Contexts/SerachBar";
 
-
-
 export default function Header() {
   const [openButton, setOpenButton] = useState(false);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const { users, setUsers } = useContext(ContextSearch);
   const navigate = useNavigate();
   const { auth } = useAuth();
@@ -22,10 +20,9 @@ export default function Header() {
     },
   };
 
-
   function activeLogout() {
-    localStorage.removeItem('auth')
-    localStorage.removeItem('user')
+    localStorage.removeItem("auth");
+    localStorage.removeItem("user");
     navigate("/");
   }
 
@@ -33,20 +30,24 @@ export default function Header() {
     setOpenButton(!openButton);
   }
 
-  function startSearch(value){
-      if(value.trim().length >= 3){
-        setSearch(value); 
-        axios.post(`${process.env.REACT_APP_API_URL}/searchUser`, {user: value}, authorization)
-        .then(res => {
+  function startSearch(value) {
+    if (value.trim().length >= 3) {
+      setSearch(value);
+      axios
+        .post(
+          `${process.env.REACT_APP_API_URL}/searchUser`,
+          { user: value },
+          authorization
+        )
+        .then((res) => {
           setUsers(res.data);
-          
-          console.log(res.data)
+
+          console.log(res.data);
         })
-        .catch(err => console.log(err))
-      }else{
-        setUsers('')
-      }
-      
+        .catch((err) => console.log(err));
+    } else {
+      setUsers("");
+    }
   }
 
   return (
@@ -56,19 +57,31 @@ export default function Header() {
           <Logo className="logo">linkr</Logo>
         </Link>
         <BarraPesquisaContainer>
-          <DebounceInput className="input" type="text" placeholder="Search for people" minLength={3} debounceTimeout={300} value={search} onChange={e => {startSearch(e.target.value)}}/>
+          <DebounceInput
+            data-test="search"
+            className="input"
+            type="text"
+            placeholder="Search for people"
+            minLength={3}
+            debounceTimeout={300}
+            value={search}
+            onChange={(e) => {
+              startSearch(e.target.value);
+            }}
+          />
           <SearchIcon>
             <FiSearch />
           </SearchIcon>
-          <SCResults results = {users}>
-            {users && users.map(result =>
-              <Link to={`/user/${result.id}`}>
-                <SCDivUser key={result.id}>
-                  <img src={result.picture} alt={result.username}/>
-                  <p>{result.username}</p>
-                </SCDivUser>
-              </Link>
-            )}
+          <SCResults results={users}>
+            {users &&
+              users.map((result) => (
+                <Link data-test="user-search" to={`/user/${result.id}`}>
+                  <SCDivUser key={result.id}>
+                    <img src={result.picture} alt={result.username} />
+                    <p>{result.username}</p>
+                  </SCDivUser>
+                </Link>
+              ))}
           </SCResults>
         </BarraPesquisaContainer>
         <div className="barra" onClick={toggleMenu}>
@@ -80,9 +93,7 @@ export default function Header() {
       </SCHeader>
       {openButton && (
         <LogoutButton onClick={activeLogout}>
-          <LogoutText>
-            Logout
-          </LogoutText>
+          <LogoutText>Logout</LogoutText>
         </LogoutButton>
       )}
     </>
@@ -101,14 +112,14 @@ const SCHeader = styled.div`
   height: 72px;
   width: 100%;
   color: white;
-  a{
+  a {
     color: white;
-    :hover{
-    -webkit-transform: scale(1.4);
-    transform: scale(1.1);
+    :hover {
+      -webkit-transform: scale(1.4);
+      transform: scale(1.1);
+    }
   }
-  }
-  .barra{
+  .barra {
     position: relative;
   }
   h1 {
@@ -128,17 +139,16 @@ const SCHeader = styled.div`
       margin-left: 5px;
       cursor: pointer;
       &:hover {
-    background-color: #fcd3d3; 
-    transition: 0.5s;
-    opacity: 0.5;
-  }
+        background-color: #fcd3d3;
+        transition: 0.5s;
+        opacity: 0.5;
+      }
     }
     ion-icon {
       font-size: 30px;
       cursor: pointer;
     }
   }
-
 `;
 
 const BarraPesquisaContainer = styled.div`
@@ -146,7 +156,7 @@ const BarraPesquisaContainer = styled.div`
   align-items: center;
   position: relative;
 
-  .input{
+  .input {
     width: 370px;
     height: 50px;
     border-radius: 8px;
@@ -179,38 +189,37 @@ const SearchIcon = styled.div`
 const SCResults = styled.div`
   position: absolute;
   top: 53px;
-  background-color: #E7E7E7;
+  background-color: #e7e7e7;
   width: 369px;
   border-radius: 0px 0px 8px 8px;
-  display: ${props => {
-    if(props.results && props.results.length > 0){
-      return 'flex !important'
-    }else{
-      return "none!important"
+  display: ${(props) => {
+    if (props.results && props.results.length > 0) {
+      return "flex !important";
+    } else {
+      return "none!important";
     }
   }};
   flex-direction: column;
   padding-left: 20px;
   padding-top: 10px;
-  
-  a{
+
+  a {
     width: 100%;
   }
-`
+`;
 
 const SCDivUser = styled.div`
   width: 100%;
   margin-bottom: 10px;
 
-  img{
+  img {
     margin-right: 10px;
   }
 
-  p{
+  p {
     color: black;
   }
-`
-
+`;
 
 const commonStyle = `
   font-size: 30px;
@@ -231,7 +240,7 @@ const LogoutButton = styled.button`
 
   padding-top: 20px;
   ${commonStyle}
-`
+`;
 
 const Logo = styled.h1`
   ${commonStyle}
@@ -241,12 +250,11 @@ const Logo = styled.h1`
 `;
 
 const LogoutText = styled.h1`
-    ${commonStyle}
-    width: 150px;
-    height: 47px;
-    top: 72px;
-    font-size: 30px;
-    color: #fff;
-    letter-spacing: 1px;
+  ${commonStyle}
+  width: 150px;
+  height: 47px;
+  top: 72px;
+  font-size: 30px;
+  color: #fff;
+  letter-spacing: 1px;
 `;
-

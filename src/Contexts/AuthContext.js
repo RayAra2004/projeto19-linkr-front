@@ -2,21 +2,24 @@ import { createContext, useState } from "react";
 
 const AuthContext = createContext();
 
-export function AuthProvider({children}){
+export function AuthProvider({ children }) {
+  const persistedAuth = JSON.parse(localStorage.getItem("auth"));
+  const persistedUser = JSON.parse(localStorage.getItem("user"));
+  const [auth, setAuth] = useState(persistedAuth);
+  const [user, setUser] = useState(persistedUser);
 
-    const persistedAuth = JSON.parse(localStorage.getItem("auth"));
-    const [auth, setAuth] = useState(persistedAuth);
+  function login(authData, userData) {
+    setAuth(authData);
+    setUser(userData);
+    localStorage.setItem("auth", JSON.stringify(authData));
+    localStorage.setItem("user", JSON.stringify(userData));
+  }
 
-    function login(authData){
-        setAuth(authData);
-        localStorage.setItem("auth", JSON.stringify(authData));
-    }
-
-    return (
-        <AuthContext.Provider value={{auth, login}}>
-            {children}
-        </AuthContext.Provider>
-    )
+  return (
+    <AuthContext.Provider value={{ auth, login, user }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export default AuthContext;
