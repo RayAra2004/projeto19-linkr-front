@@ -1,13 +1,12 @@
-import  styled  from "styled-components";
+import styled from "styled-components";
 import Header from "../Components/Header";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
-import { Tagify } from "react-tagify";
 import { useNavigate } from "react-router-dom";
 import Post from "../Components/Post";
-import { Link } from "react-router-dom";
 import { Context } from "../Contexts/Context";
+import Trending from "../Components/Trending";
 
 export default function Timeline() {
   const [posts, setPosts] = useState(undefined);
@@ -33,7 +32,7 @@ export default function Timeline() {
       alert("Faça o Login!");
       return;
     }
-    console.log("atualizando pagina... kk")
+    console.log("atualizando pagina... kk");
 
     axios
       .get(`${process.env.REACT_APP_API_URL}/posts`)
@@ -133,7 +132,7 @@ export default function Timeline() {
         <div className="timeline">
           <p>timeline</p>
         </div>
-        <div className="publish">
+        <div data-test="publish-box" className="publish">
           <div className="user_picture">
             <img src="https://source.unsplash.com/random" alt="" />
           </div>
@@ -141,6 +140,7 @@ export default function Timeline() {
             <p>What are you going to share today?</p>
             <form onSubmit={(e) => publish(e)}>
               <input
+                data-test="link"
                 placeholder="http:// ..."
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
@@ -148,71 +148,36 @@ export default function Timeline() {
                 required
               />
               <input
+                data-test="description"
                 placeholder="Awesome article about #javascript"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 disabled={disabled}
               />
-              <button {...disabled}>{textButton}</button>
+              <button data-test="publish-btn" {...disabled}>
+                {textButton}
+              </button>
             </form>
           </div>
         </div>
         <div className="published">
           {/* TODO: Trocar para componente */}
           {posts &&
-            posts.map((p) => <Post setAtualizar={setAtualizar} atualizar={atualizar} post={p} setPosts={setPosts} url={url} />)}
+            posts.map((p) => (
+              <Post
+                setAtualizar={setAtualizar}
+                atualizar={atualizar}
+                post={p}
+                setPosts={setPosts}
+                url={url}
+              />
+            ))}
         </div>
       </SCBody>
-      <Trending>
-        <p>trending</p>
-        <Underline />
-        <Tagify
-          color="#fffff"
-          onClick={(text, type) => console.log(text, type)}
-        >
-          {trendingHashtags.map((tag, index) => (
-            <Link to={`/hashtag/${tag.replace("#", "")}`}>
-              <h2 key={index}>{tag}</h2>
-            </Link>
-          ))}
-        </Tagify>
-      </Trending>
+      <Trending trendingHashtags={trendingHashtags} />
     </SCTimeline>
   );
 }
-
-const Underline = styled.div`
-  width: 100%;
-  margin-bottom: 10px;
-  height: 1px;
-  background-color: #484848;
-`;
-
-const Trending = styled.div`
-  margin-top: 143px;
-  border-radius: 16px;
-  height: 406px;
-  width: 300px;
-  background-color: #171717;
-  p {
-    padding-left: 15px;
-    color: white;
-    font-family: "Oswald", sans-serif !important;
-    font-family: "Passion One", cursive;
-    font-weight: 700;
-    font-size: 35px;
-    line-height: 64px;
-  }
-  h2 {
-    margin-left: 10px;
-    margin-top: 5px;
-    font-family: "Lato", sans-serif !important;
-    color: white;
-    font-size: 23px;
-    font-weight: 200 !important;
-    letter-spacing: 3px;
-  }
-`;
 
 const SCTimeline = styled.div`
   height: 100%;

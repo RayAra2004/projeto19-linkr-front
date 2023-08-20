@@ -1,4 +1,4 @@
-import  styled  from "styled-components";
+import styled from "styled-components";
 import Header from "../Components/Header";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
 import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Contexts/Context";
-import { Link } from "react-router-dom";
+import Trending from "../Components/Trending";
 
 export default function TrendingPage() {
   const { trendings } = useContext(Context);
@@ -139,7 +139,7 @@ export default function TrendingPage() {
       <Header />
       <SCBody>
         <div className="timeline">
-          <p># {hashtag}</p>
+          <p data-test="hashtag-title"># {hashtag}</p>
         </div>
         <div className="published">
           {posts.map((post) => (
@@ -208,20 +208,7 @@ export default function TrendingPage() {
           ))}
         </div>
       </SCBody>
-      <Trending>
-        <p>trending</p>
-        <Underline />
-        <Tagify
-          color="#fffff"
-          onClick={(text, type) => console.log(text, type)}
-        >
-          {trendings.map((tag, index) => (
-            <Link to={`/hashtag/${tag.replace("#", "")}`}>
-              <h2 key={index}>{tag}</h2>
-            </Link>
-          ))}
-        </Tagify>
-      </Trending>
+      <Trending trendingHashtags={trendings} />
     </SCTimeline>
   );
 }
@@ -233,39 +220,6 @@ const LikeDiv = styled.div`
   h3 {
     font-size: 12px;
     font-family: "Lato", sans-serif !important;
-  }
-`;
-
-const Underline = styled.div`
-  width: 100%;
-  margin-bottom: 10px;
-  height: 1px;
-  background-color: #484848;
-`;
-
-const Trending = styled.div`
-  margin-top: 143px;
-  border-radius: 16px;
-  height: 406px;
-  width: 300px;
-  background-color: #171717;
-  p {
-    padding-left: 15px;
-    color: white;
-    font-family: "Oswald", sans-serif !important;
-    font-family: "Passion One", cursive;
-    font-weight: 700;
-    font-size: 35px;
-    line-height: 64px;
-  }
-  h2 {
-    margin-left: 10px;
-    margin-top: 5px;
-    font-family: "Lato", sans-serif !important;
-    color: white;
-    font-size: 23px;
-    font-weight: 200 !important;
-    letter-spacing: 3px;
   }
 `;
 

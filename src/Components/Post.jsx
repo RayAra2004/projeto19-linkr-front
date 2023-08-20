@@ -1,4 +1,4 @@
-import  styled  from "styled-components";
+import styled from "styled-components";
 import { Tooltip } from "react-tooltip";
 import { FaEdit, FaHeart, FaRegHeart, FaTrash } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
@@ -8,7 +8,7 @@ import { Tagify } from "react-tagify";
 
 export default function Post({ post, setPosts, atualizar, setAtualizar }) {
   const [liked, setLiked] = useState(false);
-  const { auth } = useAuth();
+  const { auth, user } = useAuth();
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [newDescription, setNewDescription] = useState(post.description);
@@ -26,51 +26,52 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
     },
   };
 
-  function editPost(){
-    if(openEdit === true){
+  function editPost() {
+    if (openEdit === true) {
       setOpenEdit(false);
-    }else{
+    } else {
       setOpenEdit(true);
     }
   }
-  function deletePost(){
-    if(openDelete === true){
+  function deletePost() {
+    if (openDelete === true) {
       setOpenDelete(false);
-    }else{
+    } else {
       setOpenDelete(true);
     }
   }
 
-  function sendEdit(e, postId){
-
+  function sendEdit(e, postId) {
     const body = {
-      description: newDescription
-    }
+      description: newDescription,
+    };
 
-    if(e.key === "Enter" || e.keyCode === 13){
+    if (e.key === "Enter" || e.keyCode === 13) {
       axios
         .put(
-          `${process.env.REACT_APP_API_URL}/post/edit/${postId}`, body, authorization
-        ).then((answer) => {
+          `${process.env.REACT_APP_API_URL}/post/edit/${postId}`,
+          body,
+          authorization
+        )
+        .then((answer) => {
           console.log(answer);
-          setAtualizar(atualizar + 1)
+          setAtualizar(atualizar + 1);
           setOpenEdit(false);
         })
         .catch((error) => {
-          alert("Erro ao Editar o Post!")
+          alert("Erro ao Editar o Post!");
           console.log(error.message);
-          
         });
+    }
+    if (e.key === "Escape" || e.keyCode === 27) {
+      setOpenEdit(false);
+    }
   }
-  if(e.key === "Escape" || e.keyCode === 27){
-    setOpenEdit(false);
-  }
-}
 
-  const handleLikeClick = (postId) => {
+  const handleLikeClick = (postId, oldLiked) => {
     const alreadyLiked = liked[postId];
 
-    if (alreadyLiked) {
+    if (alreadyLiked || oldLiked) {
       axios
         .delete(
           `${process.env.REACT_APP_API_URL}/posts/${postId}/like`,
@@ -89,6 +90,7 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
             );
           });
         });
+      setAtualizar(atualizar + 1);
     } else {
       axios
         .post(
@@ -121,31 +123,42 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
     } else if (totalLikes === 1 && liked[post.id]) {
       return "Você curtiu";
     } else if (totalLikes === 1) {
-      return `${post.likedUsers[0]} curtiu`;
-    } else if (liked[post.id]) {
-      return `Você, ${totalPeople} outras pessoas`;
+      return `${returnMe(post.likedUsers[0])} curtiu`;
     } else if (totalLikes === 2) {
-      return `${post.likedUsers[0]} e ${post.likedUsers[1]} curtiram`;
+      return `${returnMe(post.likedUsers[0])} e ${post.likedUsers[1]} curtiram`;
     } else {
-      return `${post.likedUsers[0]}, ${post.likedUsers[1]}, e ${
+      return `${returnMe(post.likedUsers[0])}, ${post.likedUsers[1]}, e ${
         totalPeople - 2
       } outras pessoas`;
     }
   };
 
+  function returnMe(postLikedUser) {
+    if (postLikedUser === user.username) {
+      return "Você";
+    }
+    return postLikedUser;
+  }
+
   return (
-    <SCPost key={post.id} className="post">
+    <SCPost key={post.id} data-test="post" className="post">
       <div className="user">
         <img src={post.picture} alt="" />
         <LikeDiv className="like">
-          <LikeButton onClick={() => handleLikeClick(post.id)}>
-            {liked[post.id] ? (
+          <LikeButton
+            data-test="like-btn"
+            onClick={() =>
+              handleLikeClick(post.id, post.likedUsers.includes(user.username))
+            }
+          >
+            {liked[post.id] || post.likedUsers.includes(user.username) ? (
               <FaHeart color="red" size={20} />
             ) : (
               <FaRegHeart color="white" size={20} />
             )}
           </LikeButton>
           <Tooltip
+            data-test="tooltip"
             id="my-tooltip"
             style={{
               backgroundColor: "white",
@@ -159,6 +172,7 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
             }}
           />
           <h3
+            data-test="counter"
             data-tooltip-id="my-tooltip"
             data-tooltip-content={handleTooltipContent(post)}
             data-tooltip-place="bottom"
@@ -169,16 +183,45 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
       </div>
       <ManageButtons>
         <EditIcon>
-          <FaEdit onClick={editPost} color="white" size={20} />
+          <FaEdit
+            data-test="edit-btn"
+            onClick={editPost}
+            color="white"
+            size={20}
+          />
         </EditIcon>
         <DeleteIcon>
-          <FaTrash onClick={deletePost} color="white" size={20} />
+          <FaTrash
+            data-test="delete-btn"
+            onClick={deletePost}
+            color="white"
+            size={20}
+          />
         </DeleteIcon>
       </ManageButtons>
       <div className="description">
-        <h2>{post.username}</h2>
-        {openEdit === true ? <input ref={descriptionInputRef} defaultValue={post.description} value={newDescription} onChange={(e) => setNewDescription(e.target.value)} onKeyDown={e => {sendEdit(e, post.id)}} type="text" /> : <span>{post.description}</span>}
-        <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">
+        <h2 data-test="username">{post.username}</h2>
+        {openEdit === true ? (
+          <input
+            data-test="edit-input"
+            ref={descriptionInputRef}
+            defaultValue={post.description}
+            value={newDescription}
+            onChange={(e) => setNewDescription(e.target.value)}
+            onKeyDown={(e) => {
+              sendEdit(e, post.id);
+            }}
+            type="text"
+          />
+        ) : (
+          <span data-test="description">{post.description}</span>
+        )}
+        <a
+          data-test="link"
+          href={post.metadataUrl.url}
+          target="_blank"
+          rel="noreferrer"
+        >
           <div className="url">
             <div className="data">
               <h1>{post.metadataUrl.title}</h1>
@@ -323,7 +366,9 @@ const LikeDiv = styled.div`
     font-family: "Lato", sans-serif !important;
   }
 `;
+
 const LikeButton = styled.div``;
+
 const ManageButtons = styled.div`
   position: absolute;
   top: 10px;
@@ -331,7 +376,7 @@ const ManageButtons = styled.div`
   display: flex;
   gap: 15px;
   padding-right: 20px;
-  padding-top: 15px;
+  padding-top: 5px;
 `;
 const EditIcon = styled.div`
   cursor: pointer;
