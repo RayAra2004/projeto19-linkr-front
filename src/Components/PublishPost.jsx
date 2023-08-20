@@ -17,6 +17,7 @@ export default function PublishPost({atualizar, setAtualizar}){
 
     function publish(e) {
         e.preventDefault();
+        console.log("clicando")
     
         setTextButton("Publishing...");
         setDisabled(true);
@@ -36,7 +37,7 @@ export default function PublishPost({atualizar, setAtualizar}){
             setAtualizar(atualizar + 1);
           })
           .catch((err) => {
-            alert("Houve um erro ao publicar seu link");
+            alert("There was an error publishing your link");
             setTextButton("Publish");
             setDisabled(false);
           });
@@ -61,7 +62,7 @@ export default function PublishPost({atualizar, setAtualizar}){
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 disabled={disabled}/>
-                <button data-test="publish-btn" {...disabled}>
+                <button data-test="publish-btn" disabled={disabled}>
                 {textButton}
               </button>
               </form>
