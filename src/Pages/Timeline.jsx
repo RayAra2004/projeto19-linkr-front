@@ -6,9 +6,8 @@ import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
 import { useNavigate } from "react-router-dom";
 import Post from "../Components/Post";
-import { Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Context } from "../Contexts/Context";
-
 
 export default function Timeline() {
   const [posts, setPosts] = useState(undefined);
@@ -19,7 +18,6 @@ export default function Timeline() {
   const [disabled, setDisabled] = useState(false);
   const [controle, setControle] = useState(0);
   const { auth } = useAuth();
-  // Estado para armazenar as tendências
   const [trendingHashtags, setTrendingHashtags] = useState([]);
   const navigate = useNavigate();
 
@@ -30,15 +28,12 @@ export default function Timeline() {
   };
 
   useEffect(() => {
-
-    console.log('oooiiiiiii')
-
-    if(!auth){
-      navigate('/')
-      alert("Faça o Login!")
-      return
+    if (!auth) {
+      navigate("/");
+      alert("Faça o Login!");
+      return;
     }
-  
+
     axios
       .get(`${process.env.REACT_APP_API_URL}/posts`)
       .then((answer) => {
@@ -56,7 +51,7 @@ export default function Timeline() {
             });
           }
         });
-        
+
         const sortedHashtags = Object.keys(hashtagCount).sort(
           (a, b) => hashtagCount[b] - hashtagCount[a]
         );
@@ -70,7 +65,7 @@ export default function Timeline() {
         );
       });
   }, [auth, navigate, setTrendings]);
-  
+
   function publish(e) {
     e.preventDefault();
 
@@ -104,7 +99,7 @@ export default function Timeline() {
   if (posts === undefined) {
     return (
       <SCTimeline>
-        <Header/>
+        <Header />
         <SCBody>
           <div className="timeline">
             <p>timeline</p>
@@ -163,9 +158,8 @@ export default function Timeline() {
         </div>
         <div className="published">
           {/* TODO: Trocar para componente */}
-          {posts && posts.map((p) => (
-              <Post post= {p} setPosts = {setPosts} url={url}/>
-          ))}
+          {posts &&
+            posts.map((p) => <Post post={p} setPosts={setPosts} url={url} />)}
         </div>
       </SCBody>
       <Trending>
@@ -218,7 +212,6 @@ const Trending = styled.div`
     letter-spacing: 3px;
   }
 `;
-
 
 const SCTimeline = styled.div`
   height: 100%;
