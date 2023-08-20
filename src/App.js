@@ -6,6 +6,7 @@ import { AuthProvider } from "./Contexts/AuthContext";
 import TrendingPage from "./Pages/TrendingPage";
 import { ContextProvider } from "./Contexts/Context";
 import { UpdateSearchBar } from "./Contexts/SerachBar";
+import UserPage from "./Pages/UserPage";
 
 export default function App() {
 
@@ -19,6 +20,7 @@ export default function App() {
               <Route path="/sign-up" element={<SignUp />} />
               <Route path="/timeline" element={<Timeline />} />
               <Route path="/hashtag/:hashtag" element={<TrendingPage />} />
+              <Route path="/user/:id" element={<UserPage/>}/>
             </Routes>
           </BrowserRouter>
         </ContextProvider>

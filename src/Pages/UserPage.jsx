@@ -1,21 +1,73 @@
 import { styled } from "styled-components";
 import Header from "../Components/Header";
 import Post from "../Components/Post";
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
+import { Context } from "../Contexts/Context";
+import { useParams } from "react-router-dom";
+import useAuth from "../Contexts/UseAuth";
+import Trending from "../Components/Trending";
 
-export default function UserPge(){
+export default function UserPage(){
+    const [posts, setPosts] = useState(undefined);
+    const { setTrendings } = useContext(Context);
+    const [trendingHashtags, setTrendingHashtags] = useState([]);
+    const { auth } = useAuth();
+    const { id } = useParams();
+
+    const authorization = {
+      headers: {
+        Authorization: `Bearer ${auth}`,
+      },
+    };
+
+
+    useEffect(() =>{
+        axios
+        .get(`${process.env.REACT_APP_API_URL}/posts/${id}`, authorization)
+        .then((answer) => {
+            console.log(answer)
+            setPosts(answer.data);
+            const hashtagCount = {};
+            answer.data.forEach((post) => {
+            const hashtags = post.description.match(/#\w+/g);
+            if (hashtags) {
+                hashtags.forEach((tag) => {
+                if (hashtagCount[tag]) {
+                    hashtagCount[tag]++;
+                } else {
+                    hashtagCount[tag] = 1;
+                }
+                });
+            }
+            });
+
+            const sortedHashtags = Object.keys(hashtagCount).sort(
+            (a, b) => hashtagCount[b] - hashtagCount[a]
+            );
+
+            setTrendingHashtags(sortedHashtags.slice(0, 10));
+            setTrendings(sortedHashtags.slice(0, 10));
+        })
+        .catch((error) => {
+            console.log(error)
+        });
+    }, [id, setTrendings])
+    
+    
+
     return(
         <SCTimeline>
             <Header/>
             <SCBody>
             <div className="timeline">
-                <p>timeline</p>
+                <img src={posts[0].picture}/>
+                <p>{posts[0].username}'s posts</p>
             </div>
             <div className="published">
                 {posts &&
                     posts.map((p) => (
                     <Post
-                        setAtualizar={setAtualizar}
-                        atualizar={atualizar}
                         post={p}
                         setPosts={setPosts}
                         permission = {false}
@@ -23,7 +75,7 @@ export default function UserPge(){
                 ))}
             </div>
             </SCBody>
-
+            <Trending trendingHashtags={trendingHashtags}/>
         </SCTimeline>
     )
 }
@@ -53,6 +105,9 @@ const SCBody = styled.div`
   }
 
   .timeline {
+    display: flex;
+    align-items: center;
+    gap: 15px;
     p {
       color: white;
       font-family: "Oswald", sans-serif !important;
@@ -60,10 +115,16 @@ const SCBody = styled.div`
       font-weight: 700;
       font-size: 43px;
       line-height: 64px;
-      margin-bottom: 40px;
+      margin-bottom: 10px;
+    }
+
+    img{
+      width: 50px;
+      height: 50px;
+      border-radius: 100%;
     }
   }
-  
+
   .published {
     margin-top: 40px;
   }

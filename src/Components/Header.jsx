@@ -94,13 +94,15 @@ export default function Header() {
           <ion-icon
             name={openButton ? "chevron-up-outline" : "chevron-down-outline"}
           ></ion-icon>
-          <img src={user.picture} alt={user.username} />
+          <img data-test="avatar" src={user.picture} alt={user.username} />
         </div>
       </SCHeader>
       {openButton && (
-        <LogoutButton onClick={activeLogout}>
-          <LogoutText>Logout</LogoutText>
-        </LogoutButton>
+        <MenuLogout data-test="menu">
+          <LogoutButton data-test="logout" onClick={activeLogout}>
+            <LogoutText>Logout</LogoutText>
+          </LogoutButton>
+        </MenuLogout>
       )}
     </>
   );
@@ -237,6 +239,10 @@ const commonStyle = `
     transform: scale(1.3);
   }
 `;
+const MenuLogout = styled.div`
+  position: absolute;
+  right: 10px;
+`
 
 const LogoutButton = styled.button`
   position: absolute;

@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
+import { Link } from "react-router-dom";
 import { ThreeDots } from  'react-loader-spinner'
 
 export default function Post({
@@ -166,6 +167,7 @@ export default function Post({
     return postLikedUser;
   }
 
+
   return (
     <SCPost key={post.id} data-test="post" className="post">
       <div className="user">
@@ -231,7 +233,9 @@ export default function Post({
       )}
 
       <div className="description">
-        <h2 data-test="username">{post.username}</h2>
+        <Link to={`/user/${post.userId}`} data-test="username">
+          <h2>{post.username}</h2>
+        </Link>
         {openEdit === true ? (
           <input
             data-test="edit-input"
@@ -359,6 +363,10 @@ const SCPost = styled.div`
     margin-top: 20px;
     margin-left: 15px;
     margin-bottom: 10px;
+
+    a{
+      color: white;
+    }
 
     span {
       h3 {

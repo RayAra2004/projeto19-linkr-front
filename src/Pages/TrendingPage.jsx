@@ -9,6 +9,7 @@ import { Tagify } from "react-tagify";
 import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Contexts/Context";
 import Trending from "../Components/Trending";
+import Post from "../Components/Post";
 
 export default function TrendingPage() {
   const { trendings } = useContext(Context);
@@ -17,6 +18,7 @@ export default function TrendingPage() {
   const { auth } = useAuth();
   const navigate = useNavigate();
   const { hashtag } = useParams();
+  const [atualizar, setAtualizar] = useState(0);
 
   const authorization = {
     headers: {
@@ -45,7 +47,7 @@ export default function TrendingPage() {
           "An error occurred while trying to fetch the posts, please refresh the page"
         );
       });
-  }, [auth, hashtag, navigate]);
+  }, [auth, hashtag, navigate, atualizar]);
 
   const handleLikeClick = (postId) => {
     const alreadyLiked = liked[postId];
@@ -143,68 +145,7 @@ export default function TrendingPage() {
         </div>
         <div className="published">
           {posts.map((post) => (
-            <SCPost key={post.id} className="post">
-              <div className="user">
-                <img src={post.picture} alt="" />
-
-                <LikeDiv className="like">
-                  <LikeButton onClick={() => handleLikeClick(post.id)}>
-                    {post.liked ? ( // Verifica o estado liked do post
-                      <FaHeart color="red" size={20} />
-                    ) : (
-                      <FaRegHeart color="white" size={20} />
-                    )}
-                  </LikeButton>
-                  <Tooltip
-                    id="my-tooltip"
-                    style={{
-                      backgroundColor: "white",
-                      fontFamily: "Lato",
-                      fontSize: "15px",
-                      color: "#222",
-                      height: "25px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  />
-                  <h3
-                    data-tooltip-id="my-tooltip"
-                    data-tooltip-content={handleTooltipContent(post)}
-                    data-tooltip-place="bottom"
-                  >
-                    {parseInt(post.likes)} likes
-                  </h3>
-                </LikeDiv>
-              </div>
-              <div className="description">
-                <h2>{post.username}</h2>
-                <span>{post.description}</span>
-                <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">
-                  <div className="url">
-                    <div className="data">
-                      <h1>{post.metadataUrl.title}</h1>
-                      <span>{post.metadataUrl.description}</span>
-                      <br />
-                      <a
-                        href={post.metadataUrl.url}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        {post.metadataUrl.url}
-                      </a>
-                    </div>
-                    <div className="image">
-                      <img src={post.metadataUrl.image} alt="" />
-                    </div>
-                  </div>
-                </a>
-                <Tagify
-                  color="#fffff"
-                  onClick={(text, type) => console.log(text, type)}
-                ></Tagify>
-              </div>
-            </SCPost>
+            <Post post = {post} setPosts = {setPosts} atualizar = {atualizar} setAtualizar = {setAtualizar} permission = {true}/>
           ))}
         </div>
       </SCBody>
