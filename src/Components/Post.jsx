@@ -5,15 +5,22 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
+import { ThreeDots } from  'react-loader-spinner'
 
-export default function Post({ post, setPosts, atualizar, setAtualizar, permission }) {
+export default function Post({
+  post,
+  setPosts,
+  atualizar,
+  setAtualizar,
+  permission,
+}) {
   const [liked, setLiked] = useState(false);
   const { auth, user } = useAuth();
   const [openEdit, setOpenEdit] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [newDescription, setNewDescription] = useState(post.description);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   const descriptionInputRef = useRef(null);
-
 
   useEffect(() => {
     if (openEdit) {
@@ -51,7 +58,6 @@ export default function Post({ post, setPosts, atualizar, setAtualizar, permissi
           authorization
         )
         .then((answer) => {
-
           setAtualizar(atualizar + 1);
           setOpenEdit(false);
         })
@@ -65,6 +71,9 @@ export default function Post({ post, setPosts, atualizar, setAtualizar, permissi
     }
   }
   function deleteConfirmation(postId) {
+
+    setIsLoadingDelete(true); // Ativar carregamento
+
     axios
       .delete(
         `${process.env.REACT_APP_API_URL}/post/delete/${postId}`,
@@ -72,12 +81,16 @@ export default function Post({ post, setPosts, atualizar, setAtualizar, permissi
       )
       .then((answer) => {
         console.log(`Post ${postId} excluído`);
-        setAtualizar(atualizar + 1);
-        setShowDeleteModal(false); // Fechar o modal após a exclusão
+        setTimeout(() => {
+          setShowDeleteModal(false); // Fechar o modal após o atraso
+          setIsLoadingDelete(false); // Desativar carregamento
+          setAtualizar(atualizar + 1);
+        }, 1500);
       })
       .catch((error) => {
         alert("Erro ao Editar o Post!");
         console.log(error.message);
+        setIsLoadingDelete(false); // Desativar carregamento em caso de erro
       });
   }
 
@@ -194,7 +207,7 @@ export default function Post({ post, setPosts, atualizar, setAtualizar, permissi
           </h3>
         </LikeDiv>
       </div>
-      { permission ? (
+      {permission ? (
         <ManageButtons>
           <EditIcon>
             <FaEdit
@@ -213,8 +226,10 @@ export default function Post({ post, setPosts, atualizar, setAtualizar, permissi
             />
           </DeleteIcon>
         </ManageButtons>
-      ) : <></>}
-      
+      ) : (
+        <></>
+      )}
+
       <div className="description">
         <h2 data-test="username">{post.username}</h2>
         {openEdit === true ? (
@@ -261,19 +276,39 @@ export default function Post({ post, setPosts, atualizar, setAtualizar, permissi
       {showDeleteModal && (
         <DeleteModal>
           <DeleteContent>
-            <p>Are you sure you want to delete this post?</p>
-            <button
-              className="cancelar"
-              onClick={() => setShowDeleteModal(false)}
-            >
-              No, go back
-            </button>
-            <button
-              className="deletar"
-              onClick={() => deleteConfirmation(post.id)}
-            >
-              Yes, delete it
-            </button>
+            {isLoadingDelete ? (
+              <ThreeDots 
+              height="100"
+              width="100"
+              radius="9"
+              color="#e6e6e6"
+              ariaLabel="three-dots-loading"
+              wrapperStyle={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "20px", // Adicione preenchimento
+              }}
+              wrapperClassName=""
+              visible={true}
+               /> // Animação de Carregamento
+            ) : (
+              <div>
+                <p>Are you sure you want to delete this post?</p>
+                <button
+                  className="cancelar"
+                  onClick={() => setShowDeleteModal(false)}
+                >
+                  No, go back
+                </button>
+                <button
+                  className="deletar"
+                  onClick={() => deleteConfirmation(post.id)}
+                >
+                  Yes, delete it
+                </button>
+              </div>
+            )}
           </DeleteContent>
         </DeleteModal>
       )}
@@ -437,13 +472,12 @@ const DeleteModal = styled.div`
 const DeleteContent = styled.div`
   background-color: #333333;
   padding: 20px;
-  width: 597px;
-  height: 172px;
+  width: 400px;
+  height: auto;
   border-radius: 50px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
   max-width: 400px;
   text-align: center;
-
   p {
     margin-bottom: 15px;
     font-family: Lato;
