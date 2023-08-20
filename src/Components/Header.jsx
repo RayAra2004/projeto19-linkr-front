@@ -258,3 +258,4 @@ const LogoutText = styled.h1`
   color: #fff;
   letter-spacing: 1px;
 `;
+
