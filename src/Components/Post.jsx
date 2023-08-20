@@ -10,9 +10,10 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
   const [liked, setLiked] = useState(false);
   const { auth, user } = useAuth();
   const [openEdit, setOpenEdit] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [newDescription, setNewDescription] = useState(post.description);
   const descriptionInputRef = useRef(null);
+  console.log(post);
 
   useEffect(() => {
     if (openEdit) {
@@ -34,11 +35,7 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
     }
   }
   function deletePost() {
-    if (openDelete === true) {
-      setOpenDelete(false);
-    } else {
-      setOpenDelete(true);
-    }
+    setShowDeleteModal((prevShowDeleteModal) => !prevShowDeleteModal);
   }
 
   function sendEdit(e, postId) {
@@ -66,6 +63,24 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
     if (e.key === "Escape" || e.keyCode === 27) {
       setOpenEdit(false);
     }
+  }
+  function deleteConfirmation(postId) {
+    axios
+      .delete(
+        `${process.env.REACT_APP_API_URL}/post/delete/${postId}`,
+        authorization
+      )
+      .then((answer) => {
+        console.log(answer);
+        alert("Post deletado com sucessso!")
+        console.log(`Post ${postId} excluído`);
+        setAtualizar(atualizar + 1);
+        setShowDeleteModal(false); // Fechar o modal após a exclusão
+      })
+      .catch((error) => {
+        alert("Erro ao Editar o Post!");
+        console.log(error.message);
+      });
   }
 
   const handleLikeClick = (postId, oldLiked) => {
@@ -242,6 +257,25 @@ export default function Post({ post, setPosts, atualizar, setAtualizar }) {
           onClick={(text, type) => console.log(text, type)}
         ></Tagify>
       </div>
+      {showDeleteModal && (
+        <DeleteModal>
+          <DeleteContent>
+            <p>Are you sure you want to delete this post?</p>
+            <button
+              className="cancelar"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              No, go back
+            </button>
+            <button
+              className="deletar"
+              onClick={() => deleteConfirmation(post.id)}
+            >
+              Yes, delete it
+            </button>
+          </DeleteContent>
+        </DeleteModal>
+      )}
     </SCPost>
   );
 }
@@ -366,9 +400,7 @@ const LikeDiv = styled.div`
     font-family: "Lato", sans-serif !important;
   }
 `;
-
 const LikeButton = styled.div``;
-
 const ManageButtons = styled.div`
   position: absolute;
   top: 10px;
@@ -383,4 +415,61 @@ const EditIcon = styled.div`
 `;
 const DeleteIcon = styled.div`
   cursor: pointer;
+`;
+const DeleteModal = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.7
+  ); /* Fundo branco com transparência */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DeleteContent = styled.div`
+  background-color: #333333;
+  padding: 20px;
+  width: 597px;
+  height: 172px;
+  border-radius: 50px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  text-align: center;
+
+  p {
+    margin-bottom: 15px;
+    font-family: Lato;
+    font-size: 34px;
+    font-weight: 300;
+    line-height: 41px;
+    letter-spacing: 0em;
+    text-align: center;
+  }
+
+  .cancelar {
+    margin: 0 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: white;
+    color: #007bff; /* Azul */
+  }
+
+  .deletar {
+    margin: 0 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007bff; /* Azul */
+    color: white;
+  }
 `;
