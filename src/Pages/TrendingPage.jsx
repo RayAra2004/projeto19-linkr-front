@@ -1,11 +1,8 @@
 import styled from "styled-components";
 import Header from "../Components/Header";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useContext, useEffect, useState } from "react";
-import { Tooltip } from "react-tooltip";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
-import { Tagify } from "react-tagify";
 import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../Contexts/Context";
 import Trending from "../Components/Trending";
@@ -13,18 +10,12 @@ import Post from "../Components/Post";
 
 export default function TrendingPage() {
   const { trendings } = useContext(Context);
-  const [liked, setLiked] = useState({});
   const [posts, setPosts] = useState(undefined);
   const { auth } = useAuth();
   const navigate = useNavigate();
   const { hashtag } = useParams();
   const [atualizar, setAtualizar] = useState(0);
 
-  const authorization = {
-    headers: {
-      Authorization: `Bearer ${auth}`,
-    },
-  };
 
   useEffect(() => {
     if (!auth) {
@@ -48,72 +39,6 @@ export default function TrendingPage() {
         );
       });
   }, [auth, hashtag, navigate, atualizar]);
-
-  const handleLikeClick = (postId) => {
-    const alreadyLiked = liked[postId];
-
-    if (alreadyLiked) {
-      axios
-        .delete(
-          `${process.env.REACT_APP_API_URL}/posts/${postId}/like`,
-          authorization
-        )
-        .then(() => {
-          setLiked((prevLiked) => ({
-            ...prevLiked,
-            [postId]: false,
-          }));
-          setPosts((prevPosts) => {
-            return prevPosts.map((post) =>
-              post.id === postId
-                ? { ...post, likes: parseInt(post.likes) - 1, liked: false }
-                : post
-            );
-          });
-        });
-    } else {
-      axios
-        .post(
-          `${process.env.REACT_APP_API_URL}/posts/${postId}/like`,
-          {},
-          authorization
-        )
-        .then(() => {
-          setLiked((prevLiked) => ({
-            ...prevLiked,
-            [postId]: true,
-          }));
-          setPosts((prevPosts) => {
-            return prevPosts.map((post) =>
-              post.id === postId
-                ? { ...post, likes: parseInt(post.likes) + 1, liked: true }
-                : post
-            );
-          });
-        });
-    }
-  };
-
-  const handleTooltipContent = (post) => {
-    const totalLikes = parseInt(post.likes);
-    const totalPeople = totalLikes - (liked[post.id] ? 1 : 0);
-
-    if (totalLikes === 0) {
-      return "Ninguém curtiu";
-    } else if (totalLikes === 1 && liked[post.id]) {
-      return "Você curtiu";
-    } else if (totalLikes === 1) {
-      return `${post.likedUsers[0]} curtiu`;
-    } else if (liked[post.id]) {
-      return `Você, ${totalPeople} outras pessoas`;
-    } else if (totalLikes === 2) {
-      return `${post.likedUsers[0]} e ${post.likedUsers[1]} curtiram`;
-    } else {
-      return `${post.likedUsers[0]}, ${post.likedUsers[1]}, e ${
-        totalPeople - 2
-      } outras pessoas`;
-    }
-  };
 
   if (posts && posts.length === 0) {
     alert("There are no posts yet");
@@ -153,18 +78,6 @@ export default function TrendingPage() {
     </SCTimeline>
   );
 }
-
-const LikeDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  h3 {
-    font-size: 12px;
-    font-family: "Lato", sans-serif !important;
-  }
-`;
-
-const LikeButton = styled.div``;
 
 const SCTimeline = styled.div`
   height: 100%;
@@ -304,117 +217,5 @@ const SCBody = styled.div`
 
   .published {
     margin-top: 40px;
-  }
-`;
-
-const SCPost = styled.div`
-  width: 100%;
-  display: flex;
-  min-height: 206px;
-  border-radius: 16px;
-  background-color: rgba(23, 23, 23, 1);
-  color: white;
-  padding-top: 1px;
-  margin-bottom: 20px;
-
-  @media (max-width: 426px) {
-    border-radius: 0;
-  }
-
-  .user {
-    margin-top: 10px;
-    margin-left: 20px;
-    gap: 20px;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-
-    h1 {
-      margin-left: 10px;
-      margin-top: -10px;
-      font-size: 19px;
-      font-family: "Lato", sans-serif !important;
-    }
-
-    img {
-      width: 50px;
-      height: 50px;
-      border-radius: 100%;
-    }
-  }
-
-  .description {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
-    margin-left: 15px;
-    margin-bottom: 10px;
-
-    span {
-      h3 {
-        font-family: "Lato", sans-serif !important;
-        font-size: 17px;
-        line-height: 21px;
-        color: rgba(183, 183, 183, 1);
-      }
-      h2 {
-        font-size: 17px;
-        font-family: "Lato", sans-serif !important;
-      }
-      span {
-        color: white;
-        font-size: 18px;
-      }
-    }
-
-    .url {
-      border: 1px solid rgba(77, 77, 77, 1);
-      border-radius: 16px;
-      max-width: 95%;
-      min-height: 92px;
-      display: flex;
-      font-family: "Lato", sans-serif !important;
-      font-weight: 400;
-      .data {
-        margin-top: 10px;
-        margin-left: 4px;
-        display: flex;
-        flex-direction: column;
-
-        h1 {
-          font-size: 21px;
-          line-height: 20px;
-          color: rgba(206, 206, 206, 1);
-        }
-
-        span {
-          font-size: 16px;
-          line-height: 13px;
-          color: rgba(155, 149, 149, 1);
-        }
-
-        a {
-          font-size: 16px;
-          line-height: 13px;
-          color: rgba(206, 206, 206, 1);
-        }
-      }
-
-      .image {
-        img {
-          width: 154px;
-          max-height: 155px;
-          border-radius: 0px 12px 13px 0px;
-        }
-      }
-    }
-
-    @media (max-width: 426px) {
-      .url {
-        margin-left: 60px;
-        width: 80%;
-      }
-    }
   }
 `;

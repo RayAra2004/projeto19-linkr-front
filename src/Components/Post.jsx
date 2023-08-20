@@ -7,7 +7,6 @@ import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
 import { ThreeDots } from "react-loader-spinner";
 import { Link } from "react-router-dom";
-import { ThreeDots } from  'react-loader-spinner';
 
 export default function Post({
   post,

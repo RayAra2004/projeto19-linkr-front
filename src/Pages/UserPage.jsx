@@ -1,4 +1,3 @@
-import { styled } from "styled-components";
 import Header from "../Components/Header";
 import Post from "../Components/Post";
 import axios from "axios";
@@ -7,6 +6,7 @@ import { Context } from "../Contexts/Context";
 import { useParams } from "react-router-dom";
 import useAuth from "../Contexts/UseAuth";
 import Trending from "../Components/Trending";
+import styled from "styled-components";
 
 export default function UserPage(){
     const [posts, setPosts] = useState(undefined);
@@ -15,14 +15,16 @@ export default function UserPage(){
     const { auth } = useAuth();
     const { id } = useParams();
 
-    const authorization = {
-      headers: {
-        Authorization: `Bearer ${auth}`,
-      },
-    };
+    
 
 
     useEffect(() =>{
+      const authorization = {
+        headers: {
+          Authorization: `Bearer ${auth}`,
+        },
+      };
+
         axios
         .get(`${process.env.REACT_APP_API_URL}/posts/${id}`, authorization)
         .then((answer) => {
@@ -52,7 +54,7 @@ export default function UserPage(){
         .catch((error) => {
             console.log(error)
         });
-    }, [id, setTrendings])
+    }, [id, setTrendings, auth])
     
     
 
@@ -61,7 +63,7 @@ export default function UserPage(){
             <Header/>
             <SCBody>
             <div className="timeline">
-                <img src={posts[0].picture}/>
+                <img src={posts[0].picture} alt=""/>
                 <p>{posts[0].username}'s posts</p>
             </div>
             <div className="published">
