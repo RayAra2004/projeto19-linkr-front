@@ -1,128 +1,136 @@
 import { styled } from "styled-components"
 import { Tooltip } from "react-tooltip"
-import { FaHeart, FaRegHeart } from "react-icons/fa"
+import { FaEdit, FaHeart, FaRegHeart, FaTrash } from "react-icons/fa"
 import { useState } from "react";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
 
-export default function Post({post, setPosts}){
-    const [liked, setLiked] = useState(false);
-    const { auth } = useAuth();
-    
-    const authorization = {
-        headers: {
-          Authorization: `Bearer ${auth}`,
-        },
-      };
+export default function Post({ post, setPosts }) {
+  const [liked, setLiked] = useState(false);
+  const { auth } = useAuth();
 
-    // Pretendo componentizar isso quando eu descobrir como
-    const handleLikeClick = (postId) => {
-        const alreadyLiked = liked[postId];
 
-        if (alreadyLiked) {
-        axios
-            .delete(
-            `${process.env.REACT_APP_API_URL}/posts/${postId}/like`,
-            authorization
-            ) // Quando o back for deploy, adicionar o link no .env e alterar aqui
-            .then(() => {
-            setLiked((prevLiked) => ({
-                ...prevLiked,
-                [postId]: false,
-            }));
-            setPosts((prevPosts) => {
-                return prevPosts.map((post) =>
-                post.id === postId
-                    ? { ...post, likes: parseInt(post.likes) - 1 }
-                    : post
-                );
-            });
-            });
-        } else {
-        axios
-            .post(
-            `${process.env.REACT_APP_API_URL}/posts/${postId}/like`,
-            {},
-            authorization
-            ) // Quando o back for deploy, adicionar o link no .env e alterar aqui
-            .then(() => {
-            setLiked((prevLiked) => ({
-                ...prevLiked,
-                [postId]: true,
-            }));
-            setPosts((prevPosts) => {
-                return prevPosts.map((post) =>
-                post.id === postId
-                    ? { ...post, likes: parseInt(post.likes) + 1 }
-                    : post
-                );
-            });
-            });
-        }
-    };
+  console.log(post)
 
-    return(
-        <SCPost key={post.id} className="post">
-              <div className="user">
-                <img src={post.picture} alt="" />
+  const authorization = {
+    headers: {
+      Authorization: `Bearer ${auth}`,
+    },
+  };
+  // Pretendo componentizar isso quando eu descobrir como
+  const handleLikeClick = (postId) => {
+    const alreadyLiked = liked[postId];
 
-                <LikeDiv className="like">
-                  <LikeButton onClick={() => handleLikeClick(post.id)}>
-                    {liked[post.id] ? (
-                      <FaHeart color="red" size={20} />
-                    ) : (
-                      <FaRegHeart color="white" size={20} />
-                    )}
-                  </LikeButton>
-                  <Tooltip
-                    id="my-tooltip"
-                    style={{
-                      backgroundColor: "white",
-                      fontFamily: "Lato",
-                      fontSize: "15px",
-                      color: "#222",
-                      height: "25px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  />
-                  <h3
-                    data-tooltip-id="my-tooltip"
-                    data-tooltip-content="NÃO SEI" // Preciso real de ajuda com isso, não consigo fazer uma condicional que abrange todas as possibilidades de curtidas
-                    data-tooltip-place="bottom"
-                  >
-                    {parseInt(post.likes)} likes
-                  </h3>
-                </LikeDiv>
-              </div>
-              <div className="description">
-                <h2>{post.username}</h2>
-                <span>{post.description}</span>
-            
-                <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">
-                    <div className="url">
-                        <div className="data">
-                            <h1>{post.metadataUrl.title}</h1>
-                            <span>{post.metadataUrl.description}</span><br/>
-                            <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">{post.metadataUrl.url}</a>
-                        </div>
-                        <div className="image">
-                            <img src={post.metadataUrl.image} alt=""/>
-                        </div>
-                    </div>
-                </a>
-               
-                <Tagify
-                  color="#fffff"
-                  onClick={(text, type) => console.log(text, type)}
-                >
+    if (alreadyLiked) {
+      axios
+        .delete(
+          `${process.env.REACT_APP_API_URL}/posts/${postId}/like`,
+          authorization
+        ) // Quando o back for deploy, adicionar o link no .env e alterar aqui
+        .then(() => {
+          setLiked((prevLiked) => ({
+            ...prevLiked,
+            [postId]: false,
+          }));
+          setPosts((prevPosts) => {
+            return prevPosts.map((post) =>
+              post.id === postId
+                ? { ...post, likes: parseInt(post.likes) - 1 }
+                : post
+            );
+          });
+        });
+    } else {
+      axios
+        .post(
+          `${process.env.REACT_APP_API_URL}/posts/${postId}/like`,
+          {},
+          authorization
+        ) // Quando o back for deploy, adicionar o link no .env e alterar aqui
+        .then(() => {
+          setLiked((prevLiked) => ({
+            ...prevLiked,
+            [postId]: true,
+          }));
+          setPosts((prevPosts) => {
+            return prevPosts.map((post) =>
+              post.id === postId
+                ? { ...post, likes: parseInt(post.likes) + 1 }
+                : post
+            );
+          });
+        });
+    }
+  };
+  console.log(post.metadataUrl)
 
-                </Tagify>
-              </div>
-            </SCPost>
-    )
+  return (
+    <SCPost key={post.id} className="post">
+      <div className="user">
+        <img src={post.picture} alt="" />
+        <LikeDiv className="like">
+          <LikeButton onClick={() => handleLikeClick(post.id)}>
+            {liked[post.id] ? (
+              <FaHeart color="red" size={20} />
+            ) : (
+              <FaRegHeart color="white" size={20} />
+            )}
+          </LikeButton>
+          <Tooltip
+            id="my-tooltip"
+            style={{
+              backgroundColor: "white",
+              fontFamily: "Lato",
+              fontSize: "15px",
+              color: "#222",
+              height: "25px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          />
+          <h3
+            data-tooltip-id="my-tooltip"
+            data-tooltip-content="NÃO SEI" // Preciso real de ajuda com isso, não consigo fazer uma condicional que abrange todas as possibilidades de curtidas
+            data-tooltip-place="bottom"
+          >
+            {parseInt(post.likes)} likes
+          </h3>
+        </LikeDiv>
+      </div>
+      <ManageButtons>
+        <EditIcon>
+          <FaEdit color="white" size={20} />
+        </EditIcon>
+        <DeleteIcon>
+          <FaTrash color="white" size={20} />
+        </DeleteIcon>
+      </ManageButtons>
+      <div className="description">
+        <h2>{post.username}</h2>
+        <span>{post.description}</span>
+        <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">
+          <div className="url">
+            <div className="data">
+              <h1>{post.metadataUrl.title}</h1>
+              <span>{post.metadataUrl.description}</span><br />
+              <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">{post.metadataUrl.url}</a>
+            </div>
+            <div className="image">
+              <img src={post.metadataUrl.image} alt="" />
+            </div>
+          </div>
+        </a>
+
+        <Tagify
+          color="#fffff"
+          onClick={(text, type) => console.log(text, type)}
+        >
+        </Tagify>
+      </div>
+    </SCPost>
+  )
 }
 
 const SCPost = styled.div`
@@ -134,7 +142,7 @@ const SCPost = styled.div`
   color: white;
   padding-top: 1px;
   margin-bottom: 20px;
-
+  position: relative;
   @media (max-width: 426px) {
     border-radius: 0;
   }
@@ -237,8 +245,7 @@ const SCPost = styled.div`
     }
   }
 }
-`
-
+`;
 const LikeDiv = styled.div`
   display: flex;
   flex-direction: column;
@@ -248,5 +255,20 @@ const LikeDiv = styled.div`
     font-family: "Lato", sans-serif !important;
   }
 `;
-
-const LikeButton = styled.div``;
+const LikeButton = styled.div``
+;
+const ManageButtons = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap:15px;
+  padding-right: 20px;
+  padding-top: 15px;;
+`
+const EditIcon = styled.div`
+  cursor: pointer;
+`;
+const DeleteIcon = styled.div`
+  cursor: pointer;
+`;
