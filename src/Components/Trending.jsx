@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Tagify } from "react-tagify";
-import { Link } from "react-router-dom";
+import HashtagLink from "./HashtagLink";
 
 export default function Trending({ trendingHashtags }) {
   return (
@@ -9,9 +9,7 @@ export default function Trending({ trendingHashtags }) {
       <Underline />
       <Tagify color="#fffff" onClick={(text, type) => console.log(text, type)}>
         {trendingHashtags.map((tag, index) => (
-          <Link data-test="hashtag" to={`/hashtag/${tag.replace("#", "")}`}>
-            <h2 key={index}>{tag}</h2>
-          </Link>
+          <HashtagLink tag = {tag} index = {index}/>
         ))}
       </Tagify>
     </TrendingDiv>

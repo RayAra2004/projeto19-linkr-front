@@ -12,7 +12,7 @@ import PublishPost from "../Components/PublishPost";
 export default function Timeline() {
   const [posts, setPosts] = useState(undefined);
   const { setTrendings } = useContext(Context);
-  const { auth } = useAuth();
+  const { auth, user } = useAuth();
   const [trendingHashtags, setTrendingHashtags] = useState([]);
   const navigate = useNavigate();
   const [atualizar, setAtualizar] = useState(0);
@@ -55,6 +55,7 @@ export default function Timeline() {
       })
       .catch((error) => {
         setError(true);
+        alert("An error occured while trying to fetch the posts, please refresh the page");
       });
   }, [auth, navigate, setTrendings, atualizar]);
 
@@ -71,10 +72,11 @@ export default function Timeline() {
           <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
           <div className="published">
             <p className="loading" data-test="message">
-              There are no posts yet
+              An error occured while trying to fetch the posts, please refresh the page
             </p>
           </div>
         </SCBody>
+        <Trending trendingHashtags={trendingHashtags} />
       </SCTimeline>
     );
   }
@@ -94,6 +96,7 @@ export default function Timeline() {
             </p>
           </div>
         </SCBody>
+        <Trending trendingHashtags={trendingHashtags} />
       </SCTimeline>
     );
   }
@@ -113,6 +116,7 @@ export default function Timeline() {
             </p>
           </div>
         </SCBody>
+        <Trending trendingHashtags={trendingHashtags} />
       </SCTimeline>
     );
   }
@@ -133,7 +137,7 @@ export default function Timeline() {
                 atualizar={atualizar}
                 post={p}
                 setPosts={setPosts}
-                permission = {true}
+                permission = {user.id === p.userId}
               />
             ))}
         </div>
