@@ -62,7 +62,7 @@ export default function UserPage(){
             <Header/>
             <SCBody>
             <div className="timeline">
-                {posts ?(
+                {posts && posts.length > 0 ?(
                     <>
                       <img src={posts[0].picture} alt=""/>
                       <p>{posts[0].username}'s posts</p>
