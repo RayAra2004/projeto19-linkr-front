@@ -156,12 +156,12 @@ const SCHeader = styled.div`
       font-size: 30px;
       cursor: pointer;
     }
-    @media (max-width: 375px) {
+    @media (max-width: 426px) {
       position: absolute;
     }
   }
-  @media (max-width: 375px) {
-    width: 375px;
+  @media (max-width: 426px) {
+    width: 100%;
     top: 0;
   }
 `;
@@ -184,10 +184,10 @@ const BarraPesquisaContainer = styled.div`
     margin-bottom: 10px;
     padding-left: 15px;
   }
-  @media (max-width: 375px) {
+  @media (max-width: 426px) {
     margin-top: 140px;
-    margin-left: 13px;
-    width: 350px;
+    margin-left: 25px;
+    width: 90%;
     position: absolute;
   }
 `;
@@ -212,6 +212,11 @@ const SCResults = styled.div`
   background-color: #e7e7e7;
   width: 369px;
   border-radius: 0px 0px 8px 8px;
+  @media (max-width: 426px) {
+      height: auto; 
+      width: 100%;
+      gap:60px;
+    }
   display: ${(props) => {
     if (props.results && props.results.length > 0) {
       return "flex !important";
@@ -254,7 +259,7 @@ const LogoutButton = styled.button`
   position: absolute;
   border-radius: 0px 0px 20px 20px;
   background: #171717;
-  @media (max-width: 375px) {
+  @media (max-width: 426px) {
       width: 130px;
       height: 70px;
       position: absolute;
@@ -282,7 +287,7 @@ const LogoutText = styled.h2`
   font-size: 30px;
   color: #fff;
   letter-spacing: 1px;
-  @media (max-width: 375px) {
+  @media (max-width: 426px) {
     font-size: 30px;
     margin-right:20px;
     }

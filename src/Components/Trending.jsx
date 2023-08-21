@@ -23,6 +23,10 @@ const TrendingDiv = styled.div`
   height: 406px;
   width: 300px;
   background-color: #171717;
+  @media (max-width: 426px) {
+      width: 90%;
+      margin-top: 10px;
+    }
   p {
     padding-left: 15px;
     color: white;

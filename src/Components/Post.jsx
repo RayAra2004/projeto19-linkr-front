@@ -332,7 +332,7 @@ const SCPost = styled.div`
   padding-top: 1px;
   margin-bottom: 20px;
   position: relative;
-  @media (max-width: 375px) {
+  @media (max-width: 426px) {
     border-radius: 0;
     padding-right: 15px;
   }
@@ -396,7 +396,7 @@ const SCPost = styled.div`
       display: flex;
       font-family: "Lato", sans-serif !important;
       font-weight: 400;
-      @media (max-width: 375px) {
+      @media (max-width: 426px) {
         max-width: 300px;
       }
 

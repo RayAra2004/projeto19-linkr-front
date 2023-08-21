@@ -88,7 +88,8 @@ const DivPublish = styled.div`
     flex-direction: column; /* Stacking elements in a column */
     position: relative;
     padding: 20px;
-    @media (max-width: 375px) {
+    @media (max-width: 426px) {
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -97,7 +98,7 @@ const DivPublish = styled.div`
       height: 250px;
     }
     .user_picture{
-      @media (max-width: 375px) {
+      @media (max-width: 426px) {
       display: none;
     }
     }
@@ -127,7 +128,7 @@ const DivPublish = styled.div`
           font-size: 15px;
           line-height: 18px;
           margin-bottom: 10px;
-          @media (max-width: 375px) {
+          @media (max-width: 426px) {
           width: 100%; /* Full width for mobile */
         }
         }
@@ -150,24 +151,24 @@ const DivPublish = styled.div`
           line-height: 16px;
           text-align: center;
           font-weight: 700 !important;
-          @media (max-width: 375px) {
+          @media (max-width: 426px) {
           position: static; /* Remove absolute positioning */
           margin-top: 10px; /* Add margin for spacing */
           width: 130px; /* Full width for mobile */
           margin-left: 63%;
         }
         }
-        @media (max-width: 375px) {
+        @media (max-width: 426px) {
         
           margin-top: 10px; /* Add margin for spacing */
       }
       }
-      @media (max-width: 375px) {
+      @media (max-width: 426px) {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-    }@media (max-width: 375px) {
+    }@media (max-width: 426px) {
       div:first-child {
         margin: 0 auto; /* Center user picture horizontally */
       }
