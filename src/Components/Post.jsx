@@ -7,6 +7,7 @@ import useAuth from "../Contexts/UseAuth";
 import { Tagify } from "react-tagify";
 import { ThreeDots } from "react-loader-spinner";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Post({
   post,
@@ -22,6 +23,7 @@ export default function Post({
   const [newDescription, setNewDescription] = useState(post.description);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   const descriptionInputRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (openEdit) {
@@ -164,7 +166,6 @@ export default function Post({
     return postLikedUser;
   }
 
-
   return (
     <SCPost key={post.id} data-test="post" className="post">
       <div className="user">
@@ -196,14 +197,14 @@ export default function Post({
               alignItems: "center",
             }}
           />
-          <h3
-            data-test="counter"
+          <DivLikesTooltip
+            data-test="tooltip"
             data-tooltip-id="my-tooltip"
             data-tooltip-content={handleTooltipContent(post)}
             data-tooltip-place="bottom"
           >
-            {parseInt(post.likes)} likes
-          </h3>
+            <h3 data-test="counter">{parseInt(post.likes)} likes</h3>
+          </DivLikesTooltip>
         </LikeDiv>
       </div>
       {permission ? (
@@ -246,7 +247,13 @@ export default function Post({
             type="text"
           />
         ) : (
-          <span data-test="description">{post.description}</span>
+          <Tagify
+            color="#fffff"
+            key={post.id}
+            onClick={(text) => navigate(`/hashtag/${text}`)}
+          >
+            <span data-test="description">{post.description}</span>
+          </Tagify>
         )}
         <a
           data-test="link"
@@ -268,11 +275,6 @@ export default function Post({
             </div>
           </div>
         </a>
-
-        <Tagify
-          color="#fffff"
-          onClick={(text, type) => console.log(text, type)}
-        ></Tagify>
       </div>
       {showDeleteModal && (
         <DeleteModal>
@@ -319,6 +321,7 @@ export default function Post({
   );
 }
 
+const DivLikesTooltip = styled.div``;
 const SCPost = styled.div`
   width: 100%;
   display: flex;
@@ -363,7 +366,7 @@ const SCPost = styled.div`
     margin-left: 15px;
     margin-bottom: 10px;
 
-    a{
+    a {
       color: white;
     }
 
