@@ -154,7 +154,7 @@ const SCTimeline = styled.div`
   gap: 30px;
   justify-content: center;
   background-color: rgba(51, 51, 51, 1);
-  @media (max-width: 375px) {
+  @media (max-width: 426px) {
     margin-top: 100px;
     height: auto;
     display: flex;
@@ -167,9 +167,9 @@ const SCTimeline = styled.div`
 const SCBody = styled.div`
   width: 611px;
   margin-top: 40px;
-  @media (max-width: 375px) {
+  @media (max-width: 426px) {
       margin-top: 40px;
-      width: 375px;
+      width: 100%;
     }
   .loading {
     color: white;
@@ -187,7 +187,7 @@ const SCBody = styled.div`
       line-height: 64px;
       margin-bottom: 40px;
     }
-    @media (max-width: 375px) {
+    @media (max-width: 426px) {
       margin-left:10px;
       margin-bottom:-15px;
     }
