@@ -154,23 +154,29 @@ const SCTimeline = styled.div`
   gap: 30px;
   justify-content: center;
   background-color: rgba(51, 51, 51, 1);
+  @media (max-width: 375px) {
+    margin-top: 100px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
 `;
 
 const SCBody = styled.div`
   width: 611px;
   margin-top: 40px;
-
+  @media (max-width: 375px) {
+      margin-top: 40px;
+      width: 375px;
+    }
   .loading {
     color: white;
     font-size: 30px;
     width: 100%;
     text-align: center;
   }
-
-  @media (max-width: 611px) {
-    width: 100%;
-  }
-
   .timeline {
     p {
       color: white;
@@ -180,6 +186,10 @@ const SCBody = styled.div`
       font-size: 43px;
       line-height: 64px;
       margin-bottom: 40px;
+    }
+    @media (max-width: 375px) {
+      margin-left:10px;
+      margin-bottom:-15px;
     }
   }
   .user_picture {
@@ -191,99 +201,8 @@ const SCBody = styled.div`
     }
   }
 
-  .publish {
-    height: 209px;
-    border-radius: 16px;
-    background-color: white;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.0625);
-    display: flex;
-    position: relative;
-    padding-top: 1px;
-
-    @media (max-width: 426px) {
-      border-radius: 0px;
-    }
-
-    div:first-child {
-      margin-left: 10px;
-      margin-top: 9px;
-    }
-
-    .post-confirm {
-      p {
-        font-family: "Lato", sans-serif !important;
-        font-family: "Passion One", cursive;
-        color: rgba(112, 112, 112, 1);
-        font-size: 20px;
-        line-height: 24px;
-        font-weight: bold !important;
-        margin-top: 10px;
-        margin-bottom: 10px;
-      }
-
-      form {
-        input {
-          background-color: rgba(239, 239, 239, 1);
-          border: none;
-          border-radius: 5px;
-          height: 30px;
-          width: 503px;
-          font-family: "Lato", sans-serif !important;
-          font-size: 15px;
-          line-height: 18px;
-          margin-bottom: 10px;
-        }
-
-        @media (max-width: 611px) {
-          input {
-            width: 100%;
-          }
-        }
-
-        @media (max-width: 376px) {
-          input {
-            width: 90%;
-          }
-        }
-
-        input:nth-child(2) {
-          height: 66px;
-          vertical-align: text-top;
-        }
-
-        button {
-          position: absolute;
-          right: 18px;
-          bottom: 20px;
-          width: 112px;
-          height: 31px;
-          border: none;
-          border-radius: 5px;
-          background-color: rgba(24, 119, 242, 1);
-          color: white;
-          font-family: "Lato", sans-serif !important;
-          font-size: 16px;
-          line-height: 16px;
-          text-align: center;
-          font-weight: 700 !important;
-        }
-
-        @media (max-width: 426px) {
-          buttoN {
-            right: 35px;
-          }
-        }
-
-        @media (max-width: 376px) {
-          buttoN {
-            right: 30px;
-          }
-        }
-      }
-    }
-  }
-
   .published {
     margin-top: 40px;
+
   }
 `;

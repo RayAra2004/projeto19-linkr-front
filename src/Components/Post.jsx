@@ -332,8 +332,9 @@ const SCPost = styled.div`
   padding-top: 1px;
   margin-bottom: 20px;
   position: relative;
-  @media (max-width: 426px) {
+  @media (max-width: 375px) {
     border-radius: 0;
+    padding-right: 15px;
   }
 
   .user {
@@ -395,11 +396,16 @@ const SCPost = styled.div`
       display: flex;
       font-family: "Lato", sans-serif !important;
       font-weight: 400;
+      @media (max-width: 375px) {
+        max-width: 300px;
+      }
+
       .data {
         margin-top: 10px;
         margin-left: 4px;
         display: flex;
         flex-direction: column;
+        
 
         h1 {
           font-size: 21px;
@@ -426,13 +432,6 @@ const SCPost = styled.div`
           max-height: 155px;
           border-radius: 0px 12px 13px 0px;
         }
-      }
-    }
-
-    @media (max-width: 426px) {
-      .url {
-        margin-left: 60px;
-        width: 80%;
       }
     }
   }
