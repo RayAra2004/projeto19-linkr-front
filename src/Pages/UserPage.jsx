@@ -9,7 +9,7 @@ import Trending from "../Components/Trending";
 import styled from "styled-components";
 
 export default function UserPage(){
-    const [posts, setPosts] = useState(undefined);
+    const [posts, setPosts] = useState([]);
     const { setTrendings } = useContext(Context);
     const [trendingHashtags, setTrendingHashtags] = useState([]);
     const { auth } = useAuth();
@@ -17,18 +17,18 @@ export default function UserPage(){
 
     
 
-
+    
     useEffect(() =>{
       const authorization = {
         headers: {
           Authorization: `Bearer ${auth}`,
         },
       };
-
+        
         axios
         .get(`${process.env.REACT_APP_API_URL}/posts/${id}`, authorization)
         .then((answer) => {
-            console.log(answer)
+            console.log(answer.data)
             setPosts(answer.data);
             const hashtagCount = {};
             answer.data.forEach((post) => {
@@ -56,15 +56,19 @@ export default function UserPage(){
         });
     }, [id, setTrendings, auth])
     
-    
-
-    return(
+    if(posts){
+      return(
         <SCTimeline>
             <Header/>
             <SCBody>
             <div className="timeline">
-                <img src={posts[0].picture} alt=""/>
-                <p>{posts[0].username}'s posts</p>
+                {posts ?(
+                    <>
+                      <img src={posts[0].picture} alt=""/>
+                      <p>{posts[0].username}'s posts</p>
+                    </>
+                  ): <></>
+                }
             </div>
             <div className="published">
                 {posts &&
@@ -80,6 +84,9 @@ export default function UserPage(){
             <Trending trendingHashtags={trendingHashtags}/>
         </SCTimeline>
     )
+  }
+
+  
 }
 
 const SCTimeline = styled.div`

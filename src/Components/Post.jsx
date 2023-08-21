@@ -81,11 +81,9 @@ export default function Post({
       )
       .then((answer) => {
         console.log(`Post ${postId} excluído`);
-        setTimeout(() => {
-          setShowDeleteModal(false); // Fechar o modal após o atraso
-          setIsLoadingDelete(false); // Desativar carregamento
-          setAtualizar(atualizar + 1);
-        }, 1500);
+        setShowDeleteModal(false); // Fechar o modal após o atraso
+        setIsLoadingDelete(false); // Desativar carregamento
+        setAtualizar(atualizar + 1);
       })
       .catch((error) => {
         alert("Erro ao Editar o Post!");
