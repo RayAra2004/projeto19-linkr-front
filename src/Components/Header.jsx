@@ -29,12 +29,11 @@ export default function Header() {
   function toggleMenu() {
     setOpenButton(!openButton);
   }
-  
 
-  function listenerOutsiteClick(){
+  function listenerOutsiteClick() {
     setUsers("");
   }
-  window.addEventListener('click', listenerOutsiteClick)
+  window.addEventListener("click", listenerOutsiteClick);
 
   function startSearch(value) {
     if (value.trim().length >= 3) {
@@ -47,8 +46,7 @@ export default function Header() {
         )
         .then((res) => {
           setUsers(res.data);
-          console.log('oiiiii')
-
+          console.log("oiiiii");
         })
         .catch((err) => console.log(err));
     } else {
@@ -242,7 +240,7 @@ const commonStyle = `
 const MenuLogout = styled.div`
   position: absolute;
   right: 10px;
-`
+`;
 
 const LogoutButton = styled.button`
   position: absolute;
@@ -270,4 +268,3 @@ const LogoutText = styled.h1`
   color: #fff;
   letter-spacing: 1px;
 `;
-
