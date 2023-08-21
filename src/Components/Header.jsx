@@ -249,8 +249,6 @@ const commonStyle = `
 const MenuLogout = styled.div`
   position: absolute;
   right: 100px;
-  
-`;
 const LogoutButton = styled.button`
   position: absolute;
   border-radius: 0px 0px 20px 20px;
