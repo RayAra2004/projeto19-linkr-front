@@ -99,6 +99,13 @@ export default function SignUp() {
 
 const Container = styled.div`
   display: flex;
+
+  @media(max-width: 375px ) {
+  flex-direction: column;
+    align-items: center;
+  
+   
+  }
   `;
 
 const Banner = styled.h1`
@@ -121,6 +128,25 @@ p {
   height: 128px;
   font-size: 43px;
 }
+
+@media(max-width: 375px) {
+  height: 200px;
+
+  p {
+    width: 230px;
+    height: 75px;
+    font-size: 25px;
+   line-height: 34px;
+
+
+  }
+
+  .txt {
+    margin-top: 10px;
+ margin-left: 330px;
+  }
+  
+
 `;
 
 const FormContainer = styled.form`
@@ -128,7 +154,7 @@ const FormContainer = styled.form`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #949494;
+
   height: 1024px;
 
   input {
@@ -155,6 +181,25 @@ font-weight: 400;
 font-size: 30px;
 color: white;
 cursor: pointer;
+  }
+
+  @media(max-width: 375px) {
+    height: 600px;
+    
+  
+    input {
+   
+      width: 330px;
+      height: 55px;
+      border: 1px solid #D5D5D5;
+      border-radius: 5px;
+      font-size: 19px;
+        }
+
+        button {
+          width: 330px;
+          height: 55px; 
+        }
   }
 `;
 
