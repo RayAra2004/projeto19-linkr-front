@@ -62,7 +62,7 @@ export default function UserPage(){
             <Header/>
             <SCBody>
             <div className="timeline">
-                {posts ?(
+                {posts && posts.length > 0 ?(
                     <>
                       <img src={posts[0].picture} alt=""/>
                       <p>{posts[0].username}'s posts</p>
@@ -96,12 +96,23 @@ const SCTimeline = styled.div`
   gap: 30px;
   justify-content: center;
   background-color: rgba(51, 51, 51, 1);
+  @media (max-width: 375px) {
+    margin-top: 100px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+  }
 `;
 
 const SCBody = styled.div`
   width: 611px;
   margin-top: 40px;
-
+  @media (max-width: 375px) {
+      margin-top: 40px;
+      width: 375px;
+    }
   .loading {
     color: white;
     font-size: 30px;

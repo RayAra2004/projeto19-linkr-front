@@ -13,7 +13,6 @@ export default function Header() {
   const { users, setUsers } = useContext(ContextSearch);
   const navigate = useNavigate();
   const { auth, user } = useAuth();
-
   const authorization = {
     headers: {
       Authorization: `Bearer ${auth}`,
@@ -29,12 +28,11 @@ export default function Header() {
   function toggleMenu() {
     setOpenButton(!openButton);
   }
-  
 
-  function listenerOutsiteClick(){
+  function listenerOutsiteClick() {
     setUsers("");
   }
-  window.addEventListener('click', listenerOutsiteClick)
+  window.addEventListener("click", listenerOutsiteClick);
 
   function startSearch(value) {
     if (value.trim().length >= 3) {
@@ -47,8 +45,7 @@ export default function Header() {
         )
         .then((res) => {
           setUsers(res.data);
-          console.log('oiiiii')
-
+          console.log("oiiiii");
         })
         .catch((err) => console.log(err));
     } else {
@@ -96,14 +93,17 @@ export default function Header() {
           ></ion-icon>
           <img data-test="avatar" src={user.picture} alt={user.username} />
         </div>
-      </SCHeader>
-      {openButton && (
+        {openButton && (
         <MenuLogout data-test="menu">
           <LogoutButton data-test="logout" onClick={activeLogout}>
-            <LogoutText>Logout</LogoutText>
+            <LogoutText>
+              Logout
+              </LogoutText>
           </LogoutButton>
         </MenuLogout>
       )}
+      </SCHeader>
+      
     </>
   );
 }
@@ -156,6 +156,13 @@ const SCHeader = styled.div`
       font-size: 30px;
       cursor: pointer;
     }
+    @media (max-width: 426px) {
+      position: absolute;
+    }
+  }
+  @media (max-width: 426px) {
+    width: 100%;
+    top: 0;
   }
 `;
 
@@ -163,7 +170,6 @@ const BarraPesquisaContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
-
   .input {
     width: 370px;
     height: 50px;
@@ -177,6 +183,12 @@ const BarraPesquisaContainer = styled.div`
     margin-top: 10px;
     margin-bottom: 10px;
     padding-left: 15px;
+  }
+  @media (max-width: 426px) {
+    margin-top: 140px;
+    margin-left: 25px;
+    width: 90%;
+    position: absolute;
   }
 `;
 
@@ -200,6 +212,11 @@ const SCResults = styled.div`
   background-color: #e7e7e7;
   width: 369px;
   border-radius: 0px 0px 8px 8px;
+  @media (max-width: 426px) {
+      height: auto; 
+      width: 100%;
+      gap:60px;
+    }
   display: ${(props) => {
     if (props.results && props.results.length > 0) {
       return "flex !important";
@@ -210,25 +227,20 @@ const SCResults = styled.div`
   flex-direction: column;
   padding-left: 20px;
   padding-top: 10px;
-
   a {
     width: 100%;
   }
 `;
-
 const SCDivUser = styled.div`
   width: 100%;
   margin-bottom: 10px;
-
   img {
     margin-right: 10px;
   }
-
   p {
     color: black;
   }
 `;
-
 const commonStyle = `
   font-size: 30px;
   color: #fff;
@@ -241,16 +253,22 @@ const commonStyle = `
 `;
 const MenuLogout = styled.div`
   position: absolute;
-  right: 10px;
+  right: 100px;
 `
-
 const LogoutButton = styled.button`
   position: absolute;
-  right: 10px;
   border-radius: 0px 0px 20px 20px;
   background: #171717;
-
-  padding-top: 20px;
+  @media (max-width: 426px) {
+      width: 130px;
+      height: 70px;
+      position: absolute;
+      left: -90px;
+      font-size: 15px;
+      text-align: center;
+      padding: -20px;
+      top: 35px;
+    }
   ${commonStyle}
 `;
 
@@ -261,7 +279,7 @@ const Logo = styled.h1`
   margin-left: 30px;
 `;
 
-const LogoutText = styled.h1`
+const LogoutText = styled.h2`
   ${commonStyle}
   width: 150px;
   height: 47px;
@@ -269,5 +287,8 @@ const LogoutText = styled.h1`
   font-size: 30px;
   color: #fff;
   letter-spacing: 1px;
+  @media (max-width: 426px) {
+    font-size: 30px;
+    margin-right:20px;
+    }
 `;
-
