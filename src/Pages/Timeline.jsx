@@ -17,7 +17,12 @@ export default function Timeline() {
   const navigate = useNavigate();
   const [atualizar, setAtualizar] = useState(0);
   const [error, setError] = useState(false);
-
+  const [follower, setFollower] = useState(true);
+  const authorization = {
+    headers: {
+      Authorization: `Bearer ${auth}`,
+    },
+  };
   
 
   useEffect(() => {
@@ -29,11 +34,13 @@ export default function Timeline() {
     console.log("atualizando pagina... kk");
 
     axios
-      .get(`${process.env.REACT_APP_API_URL}/posts`)
+      .get(`${process.env.REACT_APP_API_URL}/posts`, authorization)
       .then((answer) => {
-        setPosts(answer.data);
+        console.log(answer)
+        setPosts(answer.data.response);
+        setFollower(answer.data.follower);
         const hashtagCount = {};
-        answer.data.forEach((post) => {
+        answer.data.response.forEach((post) => {
           const hashtags = post.description.match(/#\w+/g);
           if (hashtags) {
             hashtags.forEach((tag) => {
@@ -52,9 +59,11 @@ export default function Timeline() {
 
         setTrendingHashtags(sortedHashtags.slice(0, 10));
         setTrendings(sortedHashtags.slice(0, 10));
+        
       })
       .catch((error) => {
         setError(true);
+        console.log(error)
         alert("An error occured while trying to fetch the posts, please refresh the page");
       });
   }, [auth, navigate, setTrendings, atualizar]);
@@ -81,18 +90,18 @@ export default function Timeline() {
     );
   }
 
-  if (posts && posts.length === 0) {
+  if(!follower && posts && posts.length === 0){
     return (
       <SCTimeline>
         <Header />
         <SCBody>
-          <div className="timeline">
+        <div className="timeline">
             <p>timeline</p>
           </div>
           <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
           <div className="published">
             <p className="loading" data-test="message">
-              There are no posts yet
+              You don't follow anyone yet. Search for new friends!
             </p>
           </div>
         </SCBody>
@@ -101,7 +110,27 @@ export default function Timeline() {
     );
   }
 
-  if (posts === undefined) {
+  if(follower && posts && posts.length === 0){
+    return (
+      <SCTimeline>
+        <Header />
+        <SCBody>
+        <div className="timeline">
+            <p>timeline</p>
+          </div>
+          <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
+          <div className="published">
+            <p className="loading" data-test="message">
+              No posts found from your friends
+            </p>
+          </div>
+        </SCBody>
+        <Trending trendingHashtags={trendingHashtags} />
+      </SCTimeline>
+    );
+  }
+
+  if ((posts && posts.length === 0) || (posts === undefined)) {
     return (
       <SCTimeline>
         <Header />
