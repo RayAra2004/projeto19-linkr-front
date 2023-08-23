@@ -8,6 +8,8 @@ import Post from "../Components/Post";
 import { Context } from "../Contexts/Context";
 import Trending from "../Components/Trending";
 import PublishPost from "../Components/PublishPost";
+import { useInterval } from "use-interval";
+import { HiRefresh } from "react-icons/hi";
 
 export default function Timeline() {
   const [posts, setPosts] = useState(undefined);
@@ -18,12 +20,48 @@ export default function Timeline() {
   const [atualizar, setAtualizar] = useState(0);
   const [error, setError] = useState(false);
   const [follower, setFollower] = useState(true);
+  const [newPosts, setNewPosts] = useState([]);
+  const [refresh, setRefresh] = useState(true);
+  const [countNewPosts, setCountNewPosts] = useState(0);
   const authorization = {
     headers: {
       Authorization: `Bearer ${auth}`,
     },
   };
-  
+   
+  useInterval(() => {
+    axios.get(`${process.env.REACT_APP_API_URL}/posts`, authorization)
+      .then(res => {
+        setNewPosts(res.data.response);
+        const a1 = [...posts];
+        const a2 = res.data.response;
+        console.log("Interval")
+        if(JSON.stringify(a1) !== JSON.stringify(a2)){
+          console.log(a1, a2)
+          if(a2.length > a1.length){
+            setCountNewPosts(a2.length - a1.length);
+            console.log(countNewPosts);
+          }else{
+            let count = 0;
+            const verifyA1 =  a1.map(e => e.id)
+            const verifyA2 =  a2.map(e => e.id)
+            console.log(verifyA1, verifyA2)
+            for(let i = 0; i < verifyA2.length; i++){
+              if(verifyA2.includes(verifyA1[i])){
+                count++;
+                console.log(count);
+              }
+            }
+            setCountNewPosts(a2.length - count);
+          }
+          
+        }
+      })
+      .catch(err => {
+        console.log(err)
+        alert("An error occured while trying to fetch the posts, please refresh the page")
+      })
+  }, 15000);
 
   useEffect(() => {
     if (!auth) {
@@ -32,43 +70,48 @@ export default function Timeline() {
       return;
     }
     console.log("atualizando pagina... kk");
+    if(refresh){
+      axios.get(`${process.env.REACT_APP_API_URL}/posts`, authorization)
+        .then((answer) => {
+          console.log(answer)
+          setPosts(answer.data.response);
+          setFollower(answer.data.follower);
+          const hashtagCount = {};
+          answer.data.response.forEach((post) => {
+            const hashtags = post.description.match(/#\w+/g);
+            if (hashtags) {
+              hashtags.forEach((tag) => {
+                if (hashtagCount[tag]) {
+                  hashtagCount[tag]++;
+                } else {
+                  hashtagCount[tag] = 1;
+                }
+              });
+            }
+          });
 
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/posts`, authorization)
-      .then((answer) => {
-        console.log(answer)
-        setPosts(answer.data.response);
-        setFollower(answer.data.follower);
-        const hashtagCount = {};
-        answer.data.response.forEach((post) => {
-          const hashtags = post.description.match(/#\w+/g);
-          if (hashtags) {
-            hashtags.forEach((tag) => {
-              if (hashtagCount[tag]) {
-                hashtagCount[tag]++;
-              } else {
-                hashtagCount[tag] = 1;
-              }
-            });
-          }
+          const sortedHashtags = Object.keys(hashtagCount).sort(
+            (a, b) => hashtagCount[b] - hashtagCount[a]
+          );
+
+          setTrendingHashtags(sortedHashtags.slice(0, 10));
+          setTrendings(sortedHashtags.slice(0, 10));
+          setRefresh(false);
+          setCountNewPosts(0);
+        })
+        .catch((error) => {
+          setError(true);
+          console.log(error)
+          alert("An error occured while trying to fetch the posts, please refresh the page");
         });
-
-        const sortedHashtags = Object.keys(hashtagCount).sort(
-          (a, b) => hashtagCount[b] - hashtagCount[a]
-        );
-
-        setTrendingHashtags(sortedHashtags.slice(0, 10));
-        setTrendings(sortedHashtags.slice(0, 10));
-        
-      })
-      .catch((error) => {
-        setError(true);
-        console.log(error)
-        alert("An error occured while trying to fetch the posts, please refresh the page");
-      });
+    }
   }, [auth, navigate, setTrendings, atualizar]);
 
-  
+  function refreshPage(){
+    setRefresh(true);
+    setCountNewPosts(0);
+    setAtualizar(atualizar + 1);
+  }
 
   if (error) {
     return (
@@ -158,6 +201,10 @@ export default function Timeline() {
           <p>timeline</p>
         </div>
         <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
+        {countNewPosts > 0 ?(
+          <SCRefresh onClick={() => refreshPage()}><p>Você possui {countNewPosts} novos posts</p> <HiRefresh/> </SCRefresh>
+        ): <></>
+        }
         <div className="published">
           {posts &&
             posts.map((p) => (
@@ -235,3 +282,31 @@ const SCBody = styled.div`
 
   }
 `;
+
+const SCRefresh = styled.div`
+  margin-top: 20px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 61px;
+  border-radius: 16px;
+  box-shadow: 0px 4px 4px 0px;
+  background-color: #1877F2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  p{
+    text-align: center;
+    font-size: 16px;
+    line-height: 19px;
+    font-weight: 400;
+    font-family: "Lato", sans-serif !important;
+    color: white;
+    margin-right: 10px;
+  }
+
+  svg{
+    color: white;
+  }
+  
+`

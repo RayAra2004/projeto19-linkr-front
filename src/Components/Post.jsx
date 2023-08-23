@@ -116,7 +116,7 @@ export default function Post({
             );
           });
         });
-      setAtualizar(atualizar + 1);
+      //setAtualizar(atualizar + 1);
     } else {
       axios
         .post(
