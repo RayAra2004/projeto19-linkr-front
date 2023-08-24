@@ -2,8 +2,11 @@ import axios from "axios";
 import { useState } from "react";
 import useAuth from "../Contexts/UseAuth";
 import styled from "styled-components";
+import { useContext } from "react";
+import { Context } from "../Contexts/Context";
 
-export default function PublishPost({ atualizar, setAtualizar }) {
+export default function PublishPost() {
+  const { atualizar, setAtualizar } = useContext(Context);
   const [textButton, setTextButton] = useState("Publish");
   const [disabled, setDisabled] = useState(false);
   const [description, setDescription] = useState("");
@@ -97,10 +100,10 @@ const DivPublish = styled.div`
       padding: 10px;
       height: 250px;
     }
-    .user_picture{
+    .user_picture {
       @media (max-width: 426px) {
-      display: none;
-    }
+        display: none;
+      }
     }
     div:first-child {
       margin-left: 10px;
@@ -129,8 +132,8 @@ const DivPublish = styled.div`
           line-height: 18px;
           margin-bottom: 10px;
           @media (max-width: 426px) {
-          width: 100%; /* Full width for mobile */
-        }
+            width: 100%; /* Full width for mobile */
+          }
         }
         input:nth-child(2) {
           height: 66px;
@@ -152,23 +155,23 @@ const DivPublish = styled.div`
           text-align: center;
           font-weight: 700 !important;
           @media (max-width: 426px) {
-          position: static; /* Remove absolute positioning */
-          margin-top: 10px; /* Add margin for spacing */
-          width: 130px; /* Full width for mobile */
-          margin-left: 63%;
-        }
+            position: static; /* Remove absolute positioning */
+            margin-top: 10px; /* Add margin for spacing */
+            width: 130px; /* Full width for mobile */
+            margin-left: 63%;
+          }
         }
         @media (max-width: 426px) {
-        
           margin-top: 10px; /* Add margin for spacing */
-      }
+        }
       }
       @media (max-width: 426px) {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
     }
-    }@media (max-width: 426px) {
+    @media (max-width: 426px) {
       div:first-child {
         margin: 0 auto; /* Center user picture horizontally */
       }

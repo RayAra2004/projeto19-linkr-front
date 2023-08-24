@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Tooltip } from "react-tooltip";
 import { FaEdit, FaHeart, FaRegHeart, FaTrash } from "react-icons/fa";
+import { AiOutlineComment } from "react-icons/ai";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import useAuth from "../Contexts/UseAuth";
@@ -8,14 +9,14 @@ import { Tagify } from "react-tagify";
 import { ThreeDots } from "react-loader-spinner";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Comments from "./Comments";
+import { useContext } from "react";
+import { Context } from "../Contexts/Context";
 
-export default function Post({
-  post,
-  setPosts,
-  atualizar,
-  setAtualizar,
-  permission,
-}) {
+export default function Post({ post, setPosts, permission }) {
+  const [commentsCount, setCommentsCount] = useState(Number(post.comments));
+  const { atualizar, setAtualizar } = useContext(Context);
+  const [commentsVisible, setCommentsVisible] = useState(false);
   const [liked, setLiked] = useState(false);
   const { auth, user } = useAuth();
   const [openEdit, setOpenEdit] = useState(false);
@@ -35,6 +36,10 @@ export default function Post({
     headers: {
       Authorization: `Bearer ${auth}`,
     },
+  };
+
+  const updateCommentsCount = (newCount) => {
+    setCommentsCount(newCount);
   };
 
   function editPost() {
@@ -167,162 +172,204 @@ export default function Post({
   }
 
   return (
-    <SCPost key={post.id} data-test="post" className="post">
-      <div className="user">
-        <img src={post.picture} alt="" />
-        <LikeDiv className="like">
-          <LikeButton
-            data-test="like-btn"
-            onClick={() =>
-              handleLikeClick(post.id, post.likedUsers.includes(user.username))
-            }
-          >
-            {liked[post.id] || post.likedUsers.includes(user.username) ? (
-              <FaHeart color="red" size={20} />
-            ) : (
-              <FaRegHeart color="white" size={20} />
-            )}
-          </LikeButton>
-          <Tooltip
-            data-test="tooltip"
-            id="my-tooltip"
-            style={{
-              backgroundColor: "white",
-              fontFamily: "Lato",
-              fontSize: "15px",
-              color: "#222",
-              height: "25px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          />
-          <DivLikesTooltip
-            data-test="tooltip"
-            data-tooltip-id="my-tooltip"
-            data-tooltip-content={handleTooltipContent(post)}
-            data-tooltip-place="bottom"
-          >
-            <h3 data-test="counter">{parseInt(post.likes)} likes</h3>
-          </DivLikesTooltip>
-        </LikeDiv>
-      </div>
-      {permission ? (
-        <ManageButtons>
-          <EditIcon>
-            <FaEdit
-              data-test="edit-btn"
-              onClick={editPost}
-              color="white"
-              size={20}
+    <ContainerPage>
+      <SCPost key={post.id} data-test="post" className="post">
+        <div className="user">
+          <img src={post.picture} alt="" />
+          <LikeDiv className="like">
+            <LikeButton
+              data-test="like-btn"
+              onClick={() =>
+                handleLikeClick(
+                  post.id,
+                  post.likedUsers.includes(user.username)
+                )
+              }
+            >
+              {liked[post.id] || post.likedUsers.includes(user.username) ? (
+                <FaHeart color="red" size={20} />
+              ) : (
+                <FaRegHeart color="white" size={20} />
+              )}
+            </LikeButton>
+            <Tooltip
+              data-test="tooltip"
+              id="my-tooltip"
+              style={{
+                backgroundColor: "white",
+                fontFamily: "Lato",
+                fontSize: "15px",
+                color: "#222",
+                height: "25px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             />
-          </EditIcon>
-          <DeleteIcon>
-            <FaTrash
-              data-test="delete-btn"
-              onClick={deletePost}
-              color="white"
-              size={20}
+            <DivLikesTooltip
+              data-test="tooltip"
+              data-tooltip-id="my-tooltip"
+              data-tooltip-content={handleTooltipContent(post)}
+              data-tooltip-place="bottom"
+            >
+              <h3 data-test="counter">{parseInt(post.likes)} likes</h3>
+            </DivLikesTooltip>
+          </LikeDiv>
+          <CommentsDiv>
+            <AiOutlineComment
+              onClick={() => setCommentsVisible(!commentsVisible)}
             />
-          </DeleteIcon>
-        </ManageButtons>
-      ) : (
-        <></>
-      )}
-
-      <div className="description">
-        <Link to={`/user/${post.userId}`} data-test="username">
-          <h2>{post.username}</h2>
-        </Link>
-        {openEdit === true ? (
-          <input
-            data-test="edit-input"
-            ref={descriptionInputRef}
-            defaultValue={post.description}
-            value={newDescription}
-            onChange={(e) => setNewDescription(e.target.value)}
-            onKeyDown={(e) => {
-              sendEdit(e, post.id);
-            }}
-            type="text"
-          />
+            <h3>{commentsCount} comments</h3>
+          </CommentsDiv>
+        </div>
+        {permission ? (
+          <ManageButtons>
+            <EditIcon>
+              <FaEdit
+                data-test="edit-btn"
+                onClick={editPost}
+                color="white"
+                size={20}
+              />
+            </EditIcon>
+            <DeleteIcon>
+              <FaTrash
+                data-test="delete-btn"
+                onClick={deletePost}
+                color="white"
+                size={20}
+              />
+            </DeleteIcon>
+          </ManageButtons>
         ) : (
-          <Tagify
-            color="#fffff"
-            key={post.id}
-            onClick={(text) => navigate(`/hashtag/${text}`)}
-          >
-            <span data-test="description">{post.description}</span>
-          </Tagify>
+          <></>
         )}
-        <a
-          data-test="link"
-          href={post.metadataUrl.url}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <div className="url">
-            <div className="data">
-              <h1>{post.metadataUrl.title}</h1>
-              <span>{post.metadataUrl.description}</span>
-              <br />
-              <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">
-                {post.metadataUrl.url}
-              </a>
-            </div>
-            <div className="image">
-              <img src={post.metadataUrl.image} alt="" />
-            </div>
-          </div>
-        </a>
-      </div>
-      {showDeleteModal && (
-        <DeleteModal>
-          <DeleteContent>
-            {isLoadingDelete ? (
-              <ThreeDots
-                height="100"
-                width="100"
-                radius="9"
-                color="#e6e6e6"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: "20px", // Adicione preenchimento
-                }}
-                wrapperClassName=""
-                visible={true}
-              /> // Animação de Carregamento
-            ) : (
-              <div>
-                <p>Are you sure you want to delete this post?</p>
-                <button
-                  data-test="cancel"
-                  className="cancelar"
-                  onClick={() => setShowDeleteModal(false)}
-                >
-                  No, go back
-                </button>
-                <button
-                  data-test="confirm"
-                  className="deletar"
-                  onClick={() => deleteConfirmation(post.id)}
-                >
-                  Yes, delete it
-                </button>
+
+        <div className="description">
+          <Link to={`/user/${post.userId}`} data-test="username">
+            <h2>{post.username}</h2>
+          </Link>
+          {openEdit === true ? (
+            <input
+              data-test="edit-input"
+              ref={descriptionInputRef}
+              defaultValue={post.description}
+              value={newDescription}
+              onChange={(e) => setNewDescription(e.target.value)}
+              onKeyDown={(e) => {
+                sendEdit(e, post.id);
+              }}
+              type="text"
+            />
+          ) : (
+            <Tagify
+              color="#fffff"
+              className="styledTagify"
+              key={post.id}
+              onClick={(text) => navigate(`/hashtag/${text}`)}
+            >
+              <span data-test="description">{post.description}</span>
+            </Tagify>
+          )}
+          <a
+            data-test="link"
+            href={post.metadataUrl.url}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <div className="url">
+              <div className="data">
+                <h1>{post.metadataUrl.title}</h1>
+                <span>{post.metadataUrl.description}</span>
+                <br />
+                <a href={post.metadataUrl.url} target="_blank" rel="noreferrer">
+                  {post.metadataUrl.url}
+                </a>
               </div>
-            )}
-          </DeleteContent>
-        </DeleteModal>
+              <div className="image">
+                <img src={post.metadataUrl.image} alt="" />
+              </div>
+            </div>
+          </a>
+        </div>
+        {showDeleteModal && (
+          <DeleteModal>
+            <DeleteContent>
+              {isLoadingDelete ? (
+                <ThreeDots
+                  height="100"
+                  width="100"
+                  radius="9"
+                  color="#e6e6e6"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: "20px", // Adicione preenchimento
+                  }}
+                  wrapperClassName=""
+                  visible={true}
+                /> // Animação de Carregamento
+              ) : (
+                <div>
+                  <p>Are you sure you want to delete this post?</p>
+                  <button
+                    data-test="cancel"
+                    className="cancelar"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    No, go back
+                  </button>
+                  <button
+                    data-test="confirm"
+                    className="deletar"
+                    onClick={() => deleteConfirmation(post.id)}
+                  >
+                    Yes, delete it
+                  </button>
+                </div>
+              )}
+            </DeleteContent>
+          </DeleteModal>
+        )}
+      </SCPost>
+      {commentsVisible && (
+        <Comments
+          postId={post.id}
+          userId={post.userId}
+          commentsCount={commentsCount}
+          onUpdateCommentsCount={updateCommentsCount}
+        />
       )}
-    </SCPost>
+    </ContainerPage>
   );
 }
 
+const ContainerPage = styled.div``;
+
+const CommentsDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  svg {
+    // Icon
+    font-size: 25px;
+    cursor: pointer;
+  }
+  h3 {
+    // Comments counter
+    font-size: 12px;
+    font-family: "Lato", sans-serif !important;
+    width: 130%;
+  }
+`;
+
 const DivLikesTooltip = styled.div``;
+
 const SCPost = styled.div`
+  position: relative;
+  z-index: 2;
   width: 100%;
   display: flex;
   min-height: 206px;
@@ -330,17 +377,14 @@ const SCPost = styled.div`
   background-color: rgba(23, 23, 23, 1);
   color: white;
   padding-top: 1px;
-  margin-bottom: 20px;
-  position: relative;
   @media (max-width: 426px) {
     border-radius: 0;
     padding-right: 15px;
   }
-
   .user {
     margin-top: 10px;
     margin-left: 20px;
-    gap: 20px;
+    gap: 15px;
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -361,20 +405,20 @@ const SCPost = styled.div`
 
   .description {
     display: flex;
+    color: #b7b7b7;
     flex-direction: column;
     gap: 10px;
     margin-top: 20px;
-    margin-left: 15px;
+    margin-left: 20px;
     margin-bottom: 10px;
-
     a {
       color: white;
     }
-
     span {
       h3 {
         font-family: "Lato", sans-serif !important;
         font-size: 17px;
+        font-weight: 700px;
         line-height: 21px;
         color: rgba(183, 183, 183, 1);
       }
@@ -383,6 +427,7 @@ const SCPost = styled.div`
         font-family: "Lato", sans-serif !important;
       }
       span {
+        font-weight: 700px;
         color: white;
         font-size: 18px;
       }
@@ -405,7 +450,6 @@ const SCPost = styled.div`
         margin-left: 4px;
         display: flex;
         flex-direction: column;
-        
 
         h1 {
           font-size: 21px;
@@ -445,7 +489,13 @@ const LikeDiv = styled.div`
     font-family: "Lato", sans-serif !important;
   }
 `;
-const LikeButton = styled.div``;
+
+const LikeButton = styled.div`
+  svg {
+    cursor: pointer;
+  }
+`;
+
 const ManageButtons = styled.div`
   position: absolute;
   top: 10px;
