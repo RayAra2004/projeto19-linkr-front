@@ -17,9 +17,10 @@ export default function Timeline() {
   const { auth, user } = useAuth();
   const [trendingHashtags, setTrendingHashtags] = useState([]);
   const navigate = useNavigate();
-  const [atualizar, setAtualizar] = useState(0);
+  const { atualizar, setAtualizar } = useContext(Context);
   const [error, setError] = useState(false);
   const [follower, setFollower] = useState(true);
+  // eslint-disable-next-line no-unused-vars
   const [newPosts, setNewPosts] = useState([]);
   const [refresh, setRefresh] = useState(true);
   const [countNewPosts, setCountNewPosts] = useState(0);
@@ -28,39 +29,41 @@ export default function Timeline() {
       Authorization: `Bearer ${auth}`,
     },
   };
-   
+
   useInterval(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/posts`, authorization)
-      .then(res => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/posts`, authorization)
+      .then((res) => {
         setNewPosts(res.data.response);
         const a1 = [...posts];
         const a2 = res.data.response;
-        console.log("Interval")
-        if(JSON.stringify(a1) !== JSON.stringify(a2)){
-          console.log(a1, a2)
-          if(a2.length > a1.length){
+        console.log("Interval");
+        if (JSON.stringify(a1) !== JSON.stringify(a2)) {
+          console.log(a1, a2);
+          if (a2.length > a1.length) {
             setCountNewPosts(a2.length - a1.length);
             console.log(countNewPosts);
-          }else{
+          } else {
             let count = 0;
-            const verifyA1 =  a1.map(e => e.id)
-            const verifyA2 =  a2.map(e => e.id)
-            console.log(verifyA1, verifyA2)
-            for(let i = 0; i < verifyA2.length; i++){
-              if(verifyA2.includes(verifyA1[i])){
+            const verifyA1 = a1.map((e) => e.id);
+            const verifyA2 = a2.map((e) => e.id);
+            console.log(verifyA1, verifyA2);
+            for (let i = 0; i < verifyA2.length; i++) {
+              if (verifyA2.includes(verifyA1[i])) {
                 count++;
                 console.log(count);
               }
             }
             setCountNewPosts(a2.length - count);
           }
-          
         }
       })
-      .catch(err => {
-        console.log(err)
-        alert("An error occured while trying to fetch the posts, please refresh the page")
-      })
+      .catch((err) => {
+        console.log(err);
+        alert(
+          "An error occured while trying to fetch the posts, please refresh the page"
+        );
+      });
   }, 15000);
 
   useEffect(() => {
@@ -70,10 +73,10 @@ export default function Timeline() {
       return;
     }
     console.log("atualizando pagina... kk");
-    if(refresh){
-      axios.get(`${process.env.REACT_APP_API_URL}/posts`, authorization)
+    if (refresh) {
+      axios
+        .get(`${process.env.REACT_APP_API_URL}/posts`, authorization)
         .then((answer) => {
-          console.log(answer)
           setPosts(answer.data.response);
           setFollower(answer.data.follower);
           const hashtagCount = {};
@@ -101,13 +104,16 @@ export default function Timeline() {
         })
         .catch((error) => {
           setError(true);
-          console.log(error)
-          alert("An error occured while trying to fetch the posts, please refresh the page");
+          console.log(error);
+          alert(
+            "An error occured while trying to fetch the posts, please refresh the page"
+          );
         });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, navigate, setTrendings, atualizar]);
 
-  function refreshPage(){
+  function refreshPage() {
     setRefresh(true);
     setCountNewPosts(0);
     setAtualizar(atualizar + 1);
@@ -118,13 +124,14 @@ export default function Timeline() {
       <SCTimeline>
         <Header />
         <SCBody>
-        <div className="timeline">
+          <div className="timeline">
             <p>timeline</p>
           </div>
-          <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
+          <PublishPost atualizar={atualizar} setAtualizar={setAtualizar} />
           <div className="published">
             <p className="loading" data-test="message">
-              An error occured while trying to fetch the posts, please refresh the page
+              An error occured while trying to fetch the posts, please refresh
+              the page
             </p>
           </div>
         </SCBody>
@@ -133,15 +140,15 @@ export default function Timeline() {
     );
   }
 
-  if(!follower && posts && posts.length === 0){
+  if (!follower && posts && posts.length === 0) {
     return (
       <SCTimeline>
         <Header />
         <SCBody>
-        <div className="timeline">
+          <div className="timeline">
             <p>timeline</p>
           </div>
-          <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
+          <PublishPost atualizar={atualizar} setAtualizar={setAtualizar} />
           <div className="published">
             <p className="loading" data-test="message">
               You don't follow anyone yet. Search for new friends!
@@ -153,15 +160,15 @@ export default function Timeline() {
     );
   }
 
-  if(follower && posts && posts.length === 0){
+  if (follower && posts && posts.length === 0) {
     return (
       <SCTimeline>
         <Header />
         <SCBody>
-        <div className="timeline">
+          <div className="timeline">
             <p>timeline</p>
           </div>
-          <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
+          <PublishPost atualizar={atualizar} setAtualizar={setAtualizar} />
           <div className="published">
             <p className="loading" data-test="message">
               No posts found from your friends
@@ -173,7 +180,7 @@ export default function Timeline() {
     );
   }
 
-  if ((posts && posts.length === 0) || (posts === undefined)) {
+  if ((posts && posts.length === 0) || posts === undefined) {
     return (
       <SCTimeline>
         <Header />
@@ -181,7 +188,7 @@ export default function Timeline() {
           <div className="timeline">
             <p>timeline</p>
           </div>
-          <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
+          <PublishPost atualizar={atualizar} setAtualizar={setAtualizar} />
           <div className="published">
             <p className="loading" data-test="message">
               There are no posts yet
@@ -200,11 +207,14 @@ export default function Timeline() {
         <div className="timeline">
           <p>timeline</p>
         </div>
-        <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
-        {countNewPosts > 0 ?(
-          <SCRefresh onClick={() => refreshPage()}><p>Você possui {countNewPosts} novos posts</p> <HiRefresh/> </SCRefresh>
-        ): <></>
-        }
+        <PublishPost atualizar={atualizar} setAtualizar={setAtualizar} />
+        {countNewPosts > 0 ? (
+          <SCRefresh onClick={() => refreshPage()}>
+            <p>Você possui {countNewPosts} novos posts</p> <HiRefresh />{" "}
+          </SCRefresh>
+        ) : (
+          <></>
+        )}
         <div className="published">
           {posts &&
             posts.map((p) => (
@@ -213,7 +223,7 @@ export default function Timeline() {
                 atualizar={atualizar}
                 post={p}
                 setPosts={setPosts}
-                permission = {user.id === p.userId}
+                permission={user.id === p.userId}
               />
             ))}
         </div>
@@ -244,9 +254,9 @@ const SCBody = styled.div`
   width: 611px;
   margin-top: 40px;
   @media (max-width: 426px) {
-      margin-top: 40px;
-      width: 100%;
-    }
+    margin-top: 40px;
+    width: 100%;
+  }
   .loading {
     color: white;
     font-size: 30px;
@@ -257,15 +267,14 @@ const SCBody = styled.div`
     p {
       color: white;
       font-family: "Oswald", sans-serif !important;
-      font-family: "Passion One", cursive;
-      font-weight: 700;
+      font-weight: 700 !important;
       font-size: 43px;
       line-height: 64px;
       margin-bottom: 40px;
     }
     @media (max-width: 426px) {
-      margin-left:10px;
-      margin-bottom:-15px;
+      margin-left: 10px;
+      margin-bottom: -15px;
     }
   }
   .user_picture {
@@ -278,8 +287,10 @@ const SCBody = styled.div`
   }
 
   .published {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     margin-top: 40px;
-
   }
 `;
 
@@ -290,12 +301,12 @@ const SCRefresh = styled.div`
   height: 61px;
   border-radius: 16px;
   box-shadow: 0px 4px 4px 0px;
-  background-color: #1877F2;
+  background-color: #1877f2;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  p{
+  p {
     text-align: center;
     font-size: 16px;
     line-height: 19px;
@@ -305,8 +316,7 @@ const SCRefresh = styled.div`
     margin-right: 10px;
   }
 
-  svg{
+  svg {
     color: white;
   }
-  
-`
+`;

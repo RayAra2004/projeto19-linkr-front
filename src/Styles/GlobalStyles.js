@@ -7,7 +7,7 @@ const GlobalStyle = createGlobalStyle`
         
     }
     * {
-        font-family: 'Passion One', cursive !important;
+        font-family: 'Lato', sans-serif !important;
         font-style: normal !important;
         font-weight: 400 !important;
         user-select: none !important;

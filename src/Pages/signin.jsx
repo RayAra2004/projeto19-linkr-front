@@ -83,17 +83,12 @@ export default function SignIn() {
 
 const Container = styled.div`
   display: flex;
-  backgorund-color:  #333333;
+  background-color: #333333;
 
- 
-@media(max-width: 375px ) {
-  flex-direction: column;
-  align-items: center;
-
- 
-}
-
-  
+  @media (max-width: 375px) {
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const Banner = styled.h1`
@@ -116,26 +111,21 @@ const Banner = styled.h1`
     font-size: 43px;
   }
 
-@media(max-width: 375px) {
-  height: 200px;
+  @media (max-width: 375px) {
+    height: 200px;
 
-  p {
-    width: 230px;
-    height: 75px;
-    font-size: 25px;
-   line-height: 34px;
+    p {
+      width: 230px;
+      height: 75px;
+      font-size: 25px;
+      line-height: 34px;
+    }
 
-
+    .txt {
+      margin-top: 10px;
+      margin-left: 330px;
+    }
   }
-
-  .txt {
-    margin-top: 10px;
- margin-left: 330px;
-  }
-  
-
-}
- 
 `;
 
 const FormContainer = styled.form`
@@ -171,25 +161,22 @@ const FormContainer = styled.form`
     cursor: pointer;
   }
 
-  @media(max-width: 375px) {
+  @media (max-width: 375px) {
     height: 600px;
-    
-  
+
     input {
-   
       width: 330px;
       height: 55px;
-      border: 1px solid #D5D5D5;
+      border: 1px solid #d5d5d5;
       border-radius: 5px;
       font-size: 19px;
-        }
+    }
 
-        button {
-          width: 330px;
-          height: 55px; 
-        }
+    button {
+      width: 330px;
+      height: 55px;
+    }
   }
-  
 `;
 
 const SignupLink = styled(Link)`
