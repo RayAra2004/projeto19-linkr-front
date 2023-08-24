@@ -94,16 +94,13 @@ export default function Header() {
           <img data-test="avatar" src={user.picture} alt={user.username} />
         </div>
         {openButton && (
-        <MenuLogout data-test="menu">
-          <LogoutButton data-test="logout" onClick={activeLogout}>
-            <LogoutText>
-              Logout
-              </LogoutText>
-          </LogoutButton>
-        </MenuLogout>
-      )}
+          <MenuLogout data-test="menu">
+            <LogoutButton data-test="logout" onClick={activeLogout}>
+              <LogoutText>Logout</LogoutText>
+            </LogoutButton>
+          </MenuLogout>
+        )}
       </SCHeader>
-      
     </>
   );
 }
@@ -213,10 +210,10 @@ const SCResults = styled.div`
   width: 369px;
   border-radius: 0px 0px 8px 8px;
   @media (max-width: 426px) {
-      height: auto; 
-      width: 100%;
-      gap:60px;
-    }
+    height: auto;
+    width: 100%;
+    gap: 60px;
+  }
   display: ${(props) => {
     if (props.results && props.results.length > 0) {
       return "flex !important";
@@ -254,26 +251,27 @@ const commonStyle = `
 const MenuLogout = styled.div`
   position: absolute;
   right: 100px;
-`
+`;
 const LogoutButton = styled.button`
   position: absolute;
   border-radius: 0px 0px 20px 20px;
   background: #171717;
   @media (max-width: 426px) {
-      width: 130px;
-      height: 70px;
-      position: absolute;
-      left: -90px;
-      font-size: 15px;
-      text-align: center;
-      padding: -20px;
-      top: 35px;
-    }
+    width: 130px;
+    height: 70px;
+    position: absolute;
+    left: -90px;
+    font-size: 15px;
+    text-align: center;
+    padding: -20px;
+    top: 35px;
+  }
   ${commonStyle}
 `;
 
 const Logo = styled.h1`
   ${commonStyle}
+  font-family: 'Passion One', cursive !important;
   font-weight: 700 !important;
   font-size: 49px;
   margin-left: 30px;
@@ -281,6 +279,7 @@ const Logo = styled.h1`
 
 const LogoutText = styled.h2`
   ${commonStyle}
+  font-family: 'Passion One', cursive !important;
   width: 150px;
   height: 47px;
   top: 72px;
@@ -289,6 +288,6 @@ const LogoutText = styled.h2`
   letter-spacing: 1px;
   @media (max-width: 426px) {
     font-size: 30px;
-    margin-right:20px;
-    }
+    margin-right: 20px;
+  }
 `;

@@ -16,7 +16,6 @@ export default function TrendingPage() {
   const { hashtag } = useParams();
   const [atualizar, setAtualizar] = useState(0);
 
-
   useEffect(() => {
     if (!auth) {
       navigate("/");
@@ -70,7 +69,13 @@ export default function TrendingPage() {
         </div>
         <div className="published">
           {posts.map((post) => (
-            <Post post = {post} setPosts = {setPosts} atualizar = {atualizar} setAtualizar = {setAtualizar} permission = {true}/>
+            <Post
+              post={post}
+              setPosts={setPosts}
+              atualizar={atualizar}
+              setAtualizar={setAtualizar}
+              permission={true}
+            />
           ))}
         </div>
       </SCBody>
@@ -107,7 +112,6 @@ const SCBody = styled.div`
     p {
       color: white;
       font-family: "Oswald", sans-serif !important;
-      font-family: "Passion One", cursive;
       font-weight: 700;
       font-size: 43px;
       line-height: 64px;
