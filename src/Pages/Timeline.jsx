@@ -10,6 +10,7 @@ import Trending from "../Components/Trending";
 import PublishPost from "../Components/PublishPost";
 import { useInterval } from "use-interval";
 import { HiRefresh } from "react-icons/hi";
+import InfiniteScroll from "react-infinite-scroller";
 
 export default function Timeline() {
   const [posts, setPosts] = useState(undefined);
@@ -23,14 +24,25 @@ export default function Timeline() {
   const [newPosts, setNewPosts] = useState([]);
   const [refresh, setRefresh] = useState(true);
   const [countNewPosts, setCountNewPosts] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
+
   const authorization = {
     headers: {
       Authorization: `Bearer ${auth}`,
     },
+    params:{
+      page: currentPage
+    }
   };
    
   useInterval(() => {
-    axios.get(`${process.env.REACT_APP_API_URL}/posts`, authorization)
+    const authorization = {
+      headers: {
+        Authorization: `Bearer ${auth}`,
+      },
+    }
+    axios.get(`${process.env.REACT_APP_API_URL}/posts/refresh`, authorization)
       .then(res => {
         setNewPosts(res.data.response);
         const a1 = [...posts];
@@ -111,6 +123,39 @@ export default function Timeline() {
     setRefresh(true);
     setCountNewPosts(0);
     setAtualizar(atualizar + 1);
+    setCurrentPage(1);
+  }
+
+  function loadPage(page) {
+    if (!hasMorePosts) {
+      return; // Não carregar mais posts se não houver mais disponíveis
+    }
+
+    axios.get(`${process.env.REACT_APP_API_URL}/posts`, {
+      headers: {
+        Authorization: `Bearer ${auth}`,
+      },
+      params: {
+        page: page,
+      },
+    })
+      .then((response) => {
+        const newPosts = response.data.response;
+
+        if (newPosts.length === 0) {
+          setHasMorePosts(false); // Marcar que não há mais posts disponíveis
+          return;
+        }
+
+        // Atualiza o estado das postagens e o número da página atual
+        setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+        setCurrentPage(page + 1);
+        console.log(page + 1)
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("An error occurred while trying to fetch the posts, please refresh the page");
+      });
   }
 
   if (error) {
@@ -196,32 +241,46 @@ export default function Timeline() {
   return (
     <SCTimeline>
       <Header />
-      <SCBody>
-        <div className="timeline">
-          <p>timeline</p>
-        </div>
-        <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
-        {countNewPosts > 0 ?(
-          <SCRefresh onClick={() => refreshPage()}><p>Você possui {countNewPosts} novos posts</p> <HiRefresh/> </SCRefresh>
-        ): <></>
-        }
-        <div className="published">
-          {posts &&
-            posts.map((p) => (
-              <Post
-                setAtualizar={setAtualizar}
-                atualizar={atualizar}
-                post={p}
-                setPosts={setPosts}
-                permission = {user.id === p.userId}
-              />
-            ))}
-        </div>
-      </SCBody>
+
+        <SCBody>
+          <div className="timeline">
+            <p>timeline</p>
+          </div>
+          <PublishPost atualizar = {atualizar} setAtualizar = {setAtualizar}/>
+          {countNewPosts > 0 ?(
+            <SCRefresh onClick={() => refreshPage()}><p>Você possui {countNewPosts} novos posts</p> <HiRefresh/> </SCRefresh>
+          ): <></>
+          }
+            <InfiniteScroll
+              pageStart={1}
+              loadMore={loadPage}
+              hasMore={hasMorePosts}
+              loader={<div className="loader" key={0}>Loading...</div>}
+            >
+              <div className="published">
+                  {posts &&
+                    posts.map((p) => (
+                      <Post
+                        setAtualizar={setAtualizar}
+                        atualizar={atualizar}
+                        post={p}
+                        setPosts={setPosts}
+                        permission = {user.id === p.userId}
+                      />
+                    ))}
+              </div>
+            </InfiniteScroll>
+        </SCBody>
       <Trending trendingHashtags={trendingHashtags} />
     </SCTimeline>
   );
 }
+
+const SCLoaderPage = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 30px;
+`
 
 const SCTimeline = styled.div`
   height: 100%;
