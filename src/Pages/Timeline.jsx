@@ -84,12 +84,16 @@ export default function Timeline() {
       return;
     }
     console.log("atualizando pagina... kk");
-    if (refresh) {
+    
       axios
         .get(`${process.env.REACT_APP_API_URL}/posts`, authorization)
         .then((answer) => {
-          setPosts(answer.data.response);
-          setFollower(answer.data.follower);
+          if (refresh) {
+            setPosts(answer.data.response);
+            setFollower(answer.data.follower);
+            setRefresh(false);
+            setCountNewPosts(0);
+          }
           const hashtagCount = {};
           answer.data.response.forEach((post) => {
             const hashtags = post.description.match(/#\w+/g);
@@ -110,8 +114,6 @@ export default function Timeline() {
 
           setTrendingHashtags(sortedHashtags.slice(0, 10));
           setTrendings(sortedHashtags.slice(0, 10));
-          setRefresh(false);
-          setCountNewPosts(0);
         })
         .catch((error) => {
           setError(true);
@@ -120,7 +122,6 @@ export default function Timeline() {
             "An error occured while trying to fetch the posts, please refresh the page"
           );
         });
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, navigate, setTrendings, atualizar]);
 
@@ -253,7 +254,7 @@ export default function Timeline() {
         </div>
         <PublishPost atualizar={atualizar} setAtualizar={setAtualizar} />
         {countNewPosts > 0 ? (
-          <SCRefresh onClick={() => refreshPage()}>
+          <SCRefresh data-test="load-btn" onClick={() => refreshPage()}>
             <p>Você possui {countNewPosts} novos posts</p> <HiRefresh />{" "}
           </SCRefresh>
         ) : (

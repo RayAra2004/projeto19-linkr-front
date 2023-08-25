@@ -27,6 +27,7 @@ export default function Post({ post, setPosts, permission }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(post)
     if (openEdit) {
       descriptionInputRef.current.focus(); // Focar quando a edição é ativada
     }
@@ -217,6 +218,7 @@ export default function Post({ post, setPosts, permission }) {
           </LikeDiv>
           <CommentsDiv>
             <AiOutlineComment
+              data-test="comment-btn"
               onClick={() => setCommentsVisible(!commentsVisible)}
             />
             <h3>{commentsCount} comments</h3>

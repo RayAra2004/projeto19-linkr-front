@@ -9,81 +9,108 @@ import Trending from "../Components/Trending";
 import styled from "styled-components";
 
 export default function UserPage(){
-    const [posts, setPosts] = useState([]);
-    const { setTrendings } = useContext(Context);
-    const [trendingHashtags, setTrendingHashtags] = useState([]);
-    const { auth } = useAuth();
-    const { id } = useParams();
+  const [posts, setPosts] = useState([]);
+  const { setTrendings } = useContext(Context);
+  const [trendingHashtags, setTrendingHashtags] = useState([]);
+  const { auth } = useAuth();
+  const { id } = useParams();
+  const [isFollower, setIsFollower] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
+  const authorization = {
+    headers: {
+      Authorization: `Bearer ${auth}`,
+    },
+  };
     
+  useEffect(() =>{
+   
+      axios
+      .get(`${process.env.REACT_APP_API_URL}/posts/${id}`, authorization)
+      .then((answer) => {
+          console.log(answer.data)
+          setPosts(answer.data);
+          const hashtagCount = {};
+          answer.data.forEach((post) => {
+          const hashtags = post.description.match(/#\w+/g);
+          if (hashtags) {
+              hashtags.forEach((tag) => {
+              if (hashtagCount[tag]) {
+                  hashtagCount[tag]++;
+              } else {
+                  hashtagCount[tag] = 1;
+              }
+              });
+          }
+          });
 
-    
-    useEffect(() =>{
-      const authorization = {
-        headers: {
-          Authorization: `Bearer ${auth}`,
-        },
-      };
-        
-        axios
-        .get(`${process.env.REACT_APP_API_URL}/posts/${id}`, authorization)
-        .then((answer) => {
-            console.log(answer.data)
-            setPosts(answer.data);
-            const hashtagCount = {};
-            answer.data.forEach((post) => {
-            const hashtags = post.description.match(/#\w+/g);
-            if (hashtags) {
-                hashtags.forEach((tag) => {
-                if (hashtagCount[tag]) {
-                    hashtagCount[tag]++;
-                } else {
-                    hashtagCount[tag] = 1;
-                }
-                });
-            }
-            });
+          const sortedHashtags = Object.keys(hashtagCount).sort(
+          (a, b) => hashtagCount[b] - hashtagCount[a]
+          );
 
-            const sortedHashtags = Object.keys(hashtagCount).sort(
-            (a, b) => hashtagCount[b] - hashtagCount[a]
-            );
+          setTrendingHashtags(sortedHashtags.slice(0, 10));
+          setTrendings(sortedHashtags.slice(0, 10));
+      })
+      .catch((error) => {
+          console.log(error)
+      });
 
-            setTrendingHashtags(sortedHashtags.slice(0, 10));
-            setTrendings(sortedHashtags.slice(0, 10));
+      axios.get(`${process.env.REACT_APP_API_URL}/isFollower/${id}`, authorization)
+        .then(res => setIsFollower(res.data.isFollower))
+        .catch(err => console.log(err.message))
+  }, [id, setTrendings, auth, isFollower])
+
+  function follow(){
+    setDisabled(true)
+    if(isFollower){
+      axios.delete(`${process.env.REACT_APP_API_URL}/follow/${id}`, authorization)
+        .then(res => {
+          setIsFollower(false);
+          setDisabled(false);
         })
-        .catch((error) => {
-            console.log(error)
-        });
-    }, [id, setTrendings, auth])
+        .catch(err => console.log(err.message))
+    }else{
+      axios.post(`${process.env.REACT_APP_API_URL}/follow/${id}`,{}, authorization)
+        .then(res => {
+          setIsFollower(true);
+          setDisabled(false);
+        })
+        .catch(err => console.log(err.message))
+    }
+  }
     
-    if(posts){
-      return(
-        <SCTimeline>
-            <Header/>
-            <SCBody>
-            <div className="timeline">
-                {posts && posts.length > 0 ?(
-                    <>
-                      <img src={posts[0].picture} alt=""/>
-                      <p>{posts[0].username}'s posts</p>
-                    </>
-                  ): <></>
-                }
-            </div>
-            <div className="published">
-                {posts &&
-                    posts.map((p) => (
-                    <Post
-                        post={p}
-                        setPosts={setPosts}
-                        permission = {false}
-                    />
-                ))}
-            </div>
-            </SCBody>
-            <Trending trendingHashtags={trendingHashtags}/>
-        </SCTimeline>
-    )
+  if(posts){
+    return(
+      <SCTimeline>
+          <Header/>
+          <SCBody>
+          <div className="timeline">
+              {posts && posts.length > 0 ?(
+                  <>
+                    <img src={posts[0].picture} alt=""/>
+                    <p>{posts[0].username}'s posts</p>
+                    {isFollower ? (
+                      <button data-test="follow-btn" onClick={() => follow()} disabled = {disabled}>Unfollow</button>
+                    ): (
+                      <button data-test="follow-btn" onClick={() => follow()} disabled = {disabled}>Follow</button>)}
+                  </>
+                ): <></>
+              }
+          </div>
+          <div className="published">
+              {posts &&
+                  posts.map((p) => (
+                  <Post
+                      post={p}
+                      setPosts={setPosts}
+                      permission = {false}
+                  />
+              ))}
+          </div>
+          </SCBody>
+          <Trending trendingHashtags={trendingHashtags}/>
+      </SCTimeline>
+  )
   }
 
   
