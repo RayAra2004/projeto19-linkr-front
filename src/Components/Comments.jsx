@@ -79,14 +79,14 @@ export default function Comments({
   }
 
   return (
-    <CommentsContainer>
+    <CommentsContainer data-test="comment-box">
       {loading ? (
         <LoadingInfo>Loading comments...</LoadingInfo>
       ) : (
         <CommentsList>
           {comments.map((comment) => (
             <>
-              <Comment key={comment.id}>
+              <Comment key={comment.id}  data-test="comment">
                 <img src={comment.picture} alt={comment.username} />
                 <InfoComment>
                   <InfoUser>
@@ -106,6 +106,7 @@ export default function Comments({
         <img src={user.picture} alt={user.username} />
         <form onSubmit={postComment}>
           <CommentInput
+            data-test="comment-input"
             type="text"
             value={comment}
             required
@@ -113,7 +114,7 @@ export default function Comments({
             placeholder="write a comment..."
           />
           <SendDiv>
-            <SendButton type="submit" onClick={postComment} />
+            <SendButton data-test="comment-submit" type="submit" onClick={postComment} />
           </SendDiv>
         </form>
       </UserComment>
